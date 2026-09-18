@@ -1,29 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Maze to Tree</title>
-  <style>
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-    }
+<meta charset="utf-8">
+<style>
 
-    body {
-      overflow: hidden;
-      background: linear-gradient(135deg, #f8fbff, #eef3f8);
-    }
+body {
+  background: #eef3f8;
+}
 
-    canvas {
-      display: block;
-    }
-  </style>
-</head>
+</style>
 <body>
-<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 
 var width = window.innerWidth,
@@ -56,7 +41,7 @@ var canvas = d3.select("body").append("canvas")
 var context = canvas.node().getContext("2d");
 
 context.translate(marginLeft, marginTop);
-context.strokeStyle = "#22304a";
+context.strokeStyle = "#000";
 context.lineWidth = 1.5;
 
 function mazePosition(d) {
@@ -108,7 +93,7 @@ function animate() {
     });
     context.stroke();
 
-    context.fillStyle = "#22304a";
+    context.fillStyle = "#000";
     deadEnds.forEach(function(d) {
       context.beginPath();
       context.arc(d[0], d[1], 2.5, 0, 2 * Math.PI);
@@ -231,5 +216,3 @@ function generateMaze(width, height) {
 }
 
 </script>
-</body>
-</html>
