@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Anscombe's Quartet</title>
+  <style>
+    body { margin: 0; padding: 32px 20px; font-family: system-ui, sans-serif; color: #173e50; background: #77d1e5; }
+    main { max-width: 1040px; margin: auto; }
+    h1 { margin-bottom: 8px; }
+    p { line-height: 1.6; }
+    #chart { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin: 28px 0; }
+    svg { display: block; width: 100%; height: auto; background: #dceff9; border: 1px solid #8bc5ed; border-radius: 12px; }
+    svg text { fill: #173e50; }
+    .chart-title { font-size: 20px; font-weight: 600; }
+    footer { font-size: 14px; }
+    a { color: #124b70; }
+    @media (max-width: 640px) { #chart { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Anscombe's Quartet</h1>
+    <p>Four datasets, shown on the same scales to compare their patterns.</p>
+    <div id="chart"></div>
+    <p id="status" role="status">Loading data…</p>
+    <footer>Data and starter code: <a href="https://github.com/jjjiia/data_visualization_2026/tree/main/anscomb">course materials</a>. Built with D3.js.</footer>
+  </main>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
