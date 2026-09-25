@@ -66,7 +66,6 @@ d3.csv("anscombe.csv").then(function(data) {
       .text("y");
   }
 
-  // Extra credit: pass a different color into the same reusable function.
   drawScatterplot(dataset1, "#123257", "Dataset I");
   drawScatterplot(dataset2, "#1769d2", "Dataset II");
   drawScatterplot(dataset3, "#008795", "Dataset III");
