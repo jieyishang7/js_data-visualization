@@ -4,7 +4,12 @@ const path = require('node:path');
 const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const root = path.join(__dirname, '..');
-const d3 = require(path.join(root, 'vendor/d3.v7.min.js'));
+async function main() {
+const response = await fetch('https://cdn.jsdelivr.net/npm/d3@7');
+assert.ok(response.ok, `D3 CDN returned HTTP ${response.status}`);
+const libraryContext = vm.createContext({});
+vm.runInContext(await response.text(), libraryContext);
+const d3 = libraryContext.d3;
 const context = { d3, console };
 vm.createContext(context);
 vm.runInContext(fs.readFileSync(path.join(root, 'script.js'), 'utf8'), context);
@@ -47,3 +52,6 @@ const overlap = vm.runInContext(`(() => {
 })()`, context);
 assert.ok(overlap < 1e-8, `Overlapping area: ${overlap}`);
 console.log(`PASS: ${rows.length} cells; full coverage; no overlapping interiors; maximum relative area error ${(result.maxError * 100).toFixed(6)}%.`);
+
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });

@@ -65,7 +65,6 @@ The original itself includes a regional legend; this project independently imple
 - `data/original_population_2023.csv` — original source snapshot
 - `assets/original-reference.jpg` — original visualization screenshot
 - `assets/reproduction-preview.jpg` — local reproduction preview
-- `vendor/d3.v7.min.js` and `vendor/LICENSE-D3` — local D3 7.9.0 and ISC license
 - `tests/validate-layout.cjs` — data and geometry validation
 
 Previous hexagon, circle, and organic-blob design code has been replaced. The independent earlier `anscombes-quartet/` assignment is preserved, with its typography also updated to Manrope.
@@ -76,9 +75,9 @@ Previous hexagon, circle, and organic-blob design code has been replaced. The in
 python3 -m http.server 8000
 ```
 
-Open [http://localhost:8000](http://localhost:8000). Use a local server because browsers restrict CSV loading from `file://`. No npm install, build step, runtime API, or original website is needed. Manrope loads from Google Fonts and requires an internet connection; if it is unavailable, the chart uses a sans-serif fallback. D3 and chart data remain local.
+Open [http://localhost:8000](http://localhost:8000). Use a local server because browsers restrict CSV loading from `file://`. No npm install, build step, runtime API, or original website is needed. Manrope loads from Google Fonts and requires an internet connection; if it is unavailable, the chart uses a sans-serif fallback. D3 v7 loads from https://cdn.jsdelivr.net/npm/d3@7 and requires an internet connection. Chart data remains local.
 
-Optional geometry verification (Node.js):
+Optional geometry verification (Node.js 18+ and internet access to the same D3 CDN):
 
 ```sh
 node tests/validate-layout.cjs
