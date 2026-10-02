@@ -1,218 +1,36 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<style>
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-body {
-  background: #eef3f8;
-}
-
-</style>
-<body>
-<script src="//d3js.org/d3.v3.min.js"></script>
-<script>
-
-var width = window.innerWidth,
-    height = window.innerHeight;
-
-var N = 1 << 0,
-    S = 1 << 1,
-    W = 1 << 2,
-    E = 1 << 3;
-
-var edgePadding = 20,
-    cellSize = 10,
-    cellSpacing = 10,
-    cellWidth = Math.floor((width - edgePadding * 2 - cellSpacing) / (cellSize + cellSpacing)),
-    cellHeight = Math.floor((height - edgePadding * 2 - cellSpacing) / (cellSize + cellSpacing)),
-    marginLeft = Math.floor((width - cellWidth * cellSize - (cellWidth + 1) * cellSpacing) / 2) + cellSpacing + cellSize / 2 + .5,
-    marginTop = Math.floor((height - cellHeight * cellSize - (cellHeight + 1) * cellSpacing) / 2) + cellSpacing + cellSize / 2 + .5,
-    root = generateTree(cellWidth, cellHeight); // each cell’s edge bits
-
-var tree = d3.layout.tree()
-    .size([height - 2 * marginTop, width - 2 * marginLeft]);
-
-var nodes = tree.nodes(root),
-    links = tree.links(nodes);
-
-var canvas = d3.select("body").append("canvas")
-    .attr("width", width)
-    .attr("height", height);
-
-var context = canvas.node().getContext("2d");
-
-context.translate(marginLeft, marginTop);
-context.strokeStyle = "#000";
-context.lineWidth = 1.5;
-
-function mazePosition(d) {
-  var i = d.index;
-  return [
-    (cellWidth - i % cellWidth - 1) * (cellSize + cellSpacing),
-    (i / cellWidth | 0) * (cellSize + cellSpacing)
-  ];
-}
-
-nodes.forEach(function(d) {
-  var p = mazePosition(d);
-  d[0] = p[0];
-  d[1] = p[1];
-});
-
-links.sort(function(a, b) {
-  return b.source.depth - a.source.depth;
-});
-
-var startNode = nodes[0],
-    finishNode = nodes.reduce(function(a, b) { return b.depth > a.depth ? b : a; }, nodes[0]),
-    deadEnds = nodes.filter(function(d) { return !d.children || d.children.length === 0; });
-
-var toTree = true;
-animate();
-
-function animate() {
-  d3.selectAll(nodes).transition()
-      .duration(600)
-      .delay(function() { return 1000 + this.depth * 50; })
-      .ease("quad-in-out")
-      .tween("position", function() {
-        var d = this,
-            target = toTree ? [d.y, d.x] : mazePosition(d),
-            i = d3.interpolate([d[0], d[1]], target);
-        return function(t) { var p = i(t); d[0] = p[0]; d[1] = p[1]; };
-      });
-
-  d3.timer(function() {
-    context.save();
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    context.clearRect(0, 0, width, height);
-    context.restore();
-    context.beginPath();
-    links.forEach(function(d) {
-      context.moveTo(d.source[0], d.source[1]);
-      context.lineTo(d.target[0], d.target[1]);
-    });
-    context.stroke();
-
-    context.fillStyle = "#000";
-    deadEnds.forEach(function(d) {
-      context.beginPath();
-      context.arc(d[0], d[1], 2.5, 0, 2 * Math.PI);
-      context.fill();
-    });
-
-    context.font = "10px sans-serif";
-    context.textAlign = "center";
-
-    context.beginPath();
-    context.arc(startNode[0], startNode[1], 4, 0, 2 * Math.PI);
-    context.fill();
-    context.fillText("Start", startNode[0], startNode[1] - 8);
-
-    context.beginPath();
-    context.arc(finishNode[0], finishNode[1], 4, 0, 2 * Math.PI);
-    context.fill();
-    context.fillText("Finish", finishNode[0], finishNode[1] - 8);
-
-    if (!links[0].target.__transition__) {
-      toTree = !toTree;
-      animate();
-      return true;
-    }
-  });
-}
-
-function generateTree(width, height) {
-  var cells = generateMaze(width, height), // each cell’s edge bits
-      visited = d3.range(width * height).map(function() { return false; }),
-      root = {index: cells.length - 1, children: []},
-      frontier = [root],
-      parent,
-      child,
-      childIndex,
-      cell;
-
-  while ((parent = frontier.pop()) != null) {
-    cell = cells[parent.index];
-    if (cell & E && !visited[childIndex = parent.index + 1]) visited[childIndex] = true, child = {index: childIndex, children: []}, parent.children.push(child), frontier.push(child);
-    if (cell & W && !visited[childIndex = parent.index - 1]) visited[childIndex] = true, child = {index: childIndex, children: []}, parent.children.push(child), frontier.push(child);
-    if (cell & S && !visited[childIndex = parent.index + width]) visited[childIndex] = true, child = {index: childIndex, children: []}, parent.children.push(child), frontier.push(child);
-    if (cell & N && !visited[childIndex = parent.index - width]) visited[childIndex] = true, child = {index: childIndex, children: []}, parent.children.push(child), frontier.push(child);
-  }
-
-  return root;
-}
-
-function generateMaze(width, height) {
-  var cells = new Array(width * height), // each cell’s edge bits
-      remaining = d3.range(width * height), // cell indexes to visit
-      previous = new Array(width * height); // current random walk
-
-  // Add the starting cell.
-  var start = remaining.pop();
-  cells[start] = 0;
-
-  // While there are remaining cells,
-  // add a loop-erased random walk to the maze.
-  while (!loopErasedRandomWalk());
-
-  return cells;
-
-  function loopErasedRandomWalk() {
-    var i0,
-        i1,
-        x0,
-        y0;
-
-    // Pick a location that’s not yet in the maze (if any).
-    do if ((i0 = remaining.pop()) == null) return true;
-    while (cells[i0] >= 0);
-
-    // Perform a random walk starting at this location,
-    previous[i0] = i0;
-    while (true) {
-      x0 = i0 % width;
-      y0 = i0 / width | 0;
-
-      // picking a legal random direction at each step.
-      i1 = Math.random() * 4 | 0;
-      if (i1 === 0) { if (y0 <= 0) continue; --y0, i1 = i0 - width; }
-      else if (i1 === 1) { if (y0 >= height - 1) continue; ++y0, i1 = i0 + width; }
-      else if (i1 === 2) { if (x0 <= 0) continue; --x0, i1 = i0 - 1; }
-      else { if (x0 >= width - 1) continue; ++x0, i1 = i0 + 1; }
-
-      // If this new cell was visited previously during this walk,
-      // erase the loop, rewinding the path to its earlier state.
-      if (previous[i1] >= 0) eraseWalk(i0, i1);
-
-      // Otherwise, just add it to the walk.
-      else previous[i1] = i0;
-
-      // If this cell is part of the maze, we’re done walking.
-      if (cells[i1] >= 0) {
-
-        // Add the random walk to the maze by backtracking to the starting cell.
-        // Also erase this walk’s history to not interfere with subsequent walks.
-        while ((i0 = previous[i1]) !== i1) {
-          if (i1 === i0 + 1) cells[i0] |= E, cells[i1] |= W;
-          else if (i1 === i0 - 1) cells[i0] |= W, cells[i1] |= E;
-          else if (i1 === i0 + width) cells[i0] |= S, cells[i1] |= N;
-          else cells[i0] |= N, cells[i1] |= S;
-          previous[i1] = NaN;
-          i1 = i0;
-        }
-
-        previous[i1] = NaN;
-        return;
-      }
-
-      i0 = i1;
-    }
-  }
-
-  function eraseWalk(i0, i2) {
-    var i1;
-    do i1 = previous[i0], previous[i0] = NaN, i0 = i1; while (i1 !== i2);
-  }
-}
-
-</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>World Population — Visual Reverse Engineering</title>
+<meta name="description" content="An independently coded reproduction of Information is Beautiful’s World Population visualization, using its original 2023 population dataset.">
+<link rel="stylesheet" href="style.css"><script defer src="vendor/d3.v7.min.js"></script><script defer src="script.js"></script>
+</head>
+<body><main>
+<header><p class="kicker">WORLD POPULATION</p><h1>India Overtakes China as the<br>World’s Most Populous Country</h1><p class="subtitle">nations with 20m+ people</p></header>
+<section aria-label="World population visualization">
+<div class="interaction-controls">
+<form id="country-search-form" role="search">
+<label for="country-search">Search country</label>
+<div class="search-row"><input id="country-search" type="search" list="country-suggestions" placeholder="e.g. Brazil, China, Nigeria" autocomplete="off" aria-describedby="search-message"><datalist id="country-suggestions"></datalist><button type="submit">Find</button></div>
+<p id="search-message" role="status" aria-live="polite"></p>
+</form>
+<div class="threshold-control"><label for="population-threshold">Minimum population: <output id="threshold-value" for="population-threshold">0M</output></label>
+<input id="population-threshold" type="range" min="0" max="1500000000" step="10000000" value="0" aria-describedby="threshold-count">
+<div class="range-limits"><span>0M</span><span>1.5B</span></div><p id="threshold-count" role="status" aria-live="polite"></p></div>
+</div>
+<p id="loading" role="status">Building the population diagram…</p>
+<div class="chart-wrap"><svg id="atlas" viewBox="-410 -410 820 820" aria-labelledby="chart-title chart-desc"><title id="chart-title">World population by country, 2023</title><desc id="chart-desc">A circular area diagram of countries with at least 20 million people. Each polygon’s area is proportional to population. Colors identify regions. Focus or hover a country for details. Click or press Enter to zoom; Reset view or Escape returns to the full chart.</desc></svg></div>
+<div class="zoom-controls"><span id="zoom-status" role="status" aria-live="polite">Full world view</span><button id="reset-zoom" type="button">Reset view</button></div>
+<div class="legend" role="group" aria-label="Highlight a region"></div>
+<p class="interaction-hint">Hover for details · Click a country to zoom · Background or Reset to return · Numbers in millions</p>
+<p id="selection-status" role="status" aria-live="polite"></p>
+<noscript><p>Enable JavaScript to view the diagram, or <a href="data/population.csv">download the CSV</a>.</p></noscript>
+</section>
+<footer><p>United Nations mid-2023 projection · <a href="https://geni.us/IIBWorldPop23">original data</a> · <a href="data/population.csv" download>download CSV</a></p><p>Recreated in HTML, CSS, JavaScript &amp; D3. Reference: <a href="https://informationisbeautiful.net/visualizations/world-population/">Information is Beautiful — World Population</a></p><p class="credits">Original design: David McCandless · Research: Nell Simon-Batsford · <a href="assets/original-reference.jpg">Reference screenshot</a></p></footer>
+<details><summary>About this reproduction &amp; data</summary><p>The 62 countries shown have at least 20 million people in the original public dataset. Areas represent their share of the displayed population, not the entire world. Values are rounded mid-2023 projections.</p><p>This independently written weighted Voronoi layout matches the circular composition, regional grouping, colors, and label hierarchy. Individual polygon boundaries and some label positions differ from the original. Source classifications are preserved, including Egypt in Middle East and Russia in Europe.</p><p id="area-quality"></p><div class="table-scroll"><table><caption>Original source values, ranked by population</caption><thead><tr><th>Rank</th><th>Country</th><th>Region</th><th>Population</th></tr></thead><tbody id="data-body"></tbody></table></div></details>
+</main><div id="tooltip" role="tooltip" hidden></div></body></html>
