@@ -1,131 +1,167 @@
-# Penguins, in proportion
+# A closer look at happiness
 
-An exploratory data project with an interactive D3 scatterplot.
+Data exploration and an interactive D3 chart using the **World Happiness Report 2026** public Figure 2.1 workbook.
 
-**Live chart:** https://jieyishang7.github.io/js_data-visualization/js_data%20exploration/
+**[Open the live chart](https://jieyishang7.github.io/js_data-visualization/js_data%20exploration/)**
 
-**Open the working chart locally:** download this folder and open `index.html` in a browser. No installation, server, or internet connection is required. Keep the folder structure intact. GitHub's file viewer shows source code; it does not execute HTML. If using GitHub Pages, publish the containing repository and open `/js_data%20exploration/` under its Pages URL.
+The chart compares average life evaluations for **147 countries and territories**, with the reported 95% confidence intervals. The 2026 report uses the **2023–2025** survey window; those observations are labeled **Year = 2025** in the workbook. These are not annual 2025 scores.
 
-## Step 1 — Dataset choice
+## Step 1 — Find a dataset
 
-This project explores how penguin body proportions differ across species. Wildlife measurements are interesting because an apparent relationship in a combined sample may partly reflect differences between groups. This dataset has enough observations and categorical dimensions to explore that issue while remaining manageable for a first D3 chart.
+The selected topic is how people evaluate their lives around the world. This dataset supports exploration of rankings, distributions, uncertainty, historical comparisons, and model-based explanations. It is especially useful for asking whether a rank difference corresponds to a meaningful score difference.
 
-## Step 2 — Dataset documentation
+The official free file is suitable for this assignment because it is publicly downloadable, structured as an Excel table, and contains 2,116 country–year-label observations. Restricted Gallup microdata are not needed for this project.
 
-| Item | Details |
+## Step 2 — Document the dataset
+
+| Item | Description |
 |---|---|
-| Dataset | Palmer Penguins, simplified `penguins` dataset |
-| Original source | Dr. Kristen Gorman and Palmer Station Antarctica Long Term Ecological Research (LTER) |
-| Dataset maintainers | Allison Horst, Alison Hill, and Kristen Gorman |
-| Project URL | https://allisonhorst.github.io/palmerpenguins/ |
-| Download URL | https://raw.githubusercontent.com/allisonhorst/palmerpenguins/main/inst/extdata/penguins.csv |
-| Date accessed | October 13, 2026 |
-| Description | Body measurements and sample characteristics for three penguin species |
-| Time coverage | 2007–2009; year only in this simplified file |
-| Geographic coverage | Biscoe, Dream, and Torgersen islands, Palmer Archipelago, Antarctica |
-| Rows | 344 observations, excluding header |
-| Columns | 8 |
-| Format | CSV; frozen local copy in `data/penguins.csv` |
-| License | CC0, as documented by the project; the source also links the Palmer Station LTER and US LTER data policies and requests contact with the researcher for publication collaborations |
+| Dataset name | World Happiness Report 2026 — Data for Figure 2.1 |
+| Organization | University of Oxford, Wellbeing Research Centre, publishing with Gallup, the UN Sustainable Development Solutions Network, and an independent editorial board |
+| Underlying survey source | Gallup World Poll for life evaluations |
+| Website | https://www.worldhappiness.report/ |
+| Data page | https://www.worldhappiness.report/data-sharing/ |
+| Direct download | https://files.worldhappiness.report/WHR26_Data_Figure_2.1.xlsx |
+| Accessed | October 13, 2026 |
+| Description | Country/territory life evaluation averages, ranks, confidence intervals where available, six modeled contributions, and Dystopia + residual |
+| Unit of observation | One country/territory in one source `Year` label; not one person |
+| Time coverage | Source `Year` labels span 2011–2025, with 14 distinct labels and no 2013 entries. Verify individual historical aggregation windows before time comparisons. Latest rows cover 2023–2025. |
+| Geographic coverage | Worldwide; 168 distinct country/territory labels across the full file, 147 in the latest snapshot. Labels are preserved as supplied. |
+| Rows | 2,116 data rows, excluding the header; 147 in the chart’s latest snapshot |
+| Columns | 13 original columns |
+| Worksheet | `Data for Figure 2.1 (2011–2025)` — the workbook’s only sheet |
+| Format | Original `.xlsx`; a values-only `.csv` export and a derived JavaScript chart snapshot are included |
+| License / terms | The official data-sharing page makes Figure 2.1 data available to download for free. No named open-data license such as CC0 or CC BY was identified on that page or in the workbook. This project attributes the source and does not claim to relicense the data. Additional Gallup data have separate request/subscription arrangements. |
 
-The local snapshot makes the analysis reproducible even if the upstream CSV changes. The simplified file does not contain individual IDs or precise dates.
+The original workbook is included unchanged in `data/`. The CSV preserves all 13 source headers and all 2,116 rows; blanks remain blank. SHA-256 of the original workbook: `576e382655cec3ae704a0b41cd2c04465b87cd84b7f131a0c4fa26d41f6d8028`.
 
 ## Step 3 — Explore the data
 
-### Variable inventory
+### Variables and meaning
 
-| Variable | Type | Meaning / use | Missing |
-|---|---|---|---:|
-| `species` | Categorical | Adelie, Chinstrap, Gentoo; compare groups | 0 |
-| `island` | Categorical / geographic | Island name; no coordinates | 0 |
-| `bill_length_mm` | Numerical | Bill length in millimeters | 2 |
-| `bill_depth_mm` | Numerical | Bill depth in millimeters | 2 |
-| `flipper_length_mm` | Numerical | Flipper length in millimeters; chart x-axis | 2 |
-| `body_mass_g` | Numerical | Body mass in grams; chart y-axis | 2 |
-| `sex` | Categorical | Female or male, when recorded | 11 |
-| `year` | Temporal, integer | Sampling year, 2007, 2008, or 2009 | 0 |
+| Variable(s) | Type | Interpretation |
+|---|---|---|
+| `Country name` | Categorical / geographic identifier | Country or territory label. There are no coordinates, continent fields, or population weights in this file. |
+| `Year` | Temporal integer label | Identifies a source snapshot. For the latest snapshot, 2025 denotes the end of the 2023–2025 ranking period, published in WHR 2026. |
+| `Rank` | Numerical, ordinal | Published position in that snapshot; rank differences are not equal score differences. |
+| `Life evaluation (3-year average)` | Numerical | Average Cantril Ladder life evaluation on a 0–10 scale. |
+| `Lower whisker`, `Upper whisker` | Numerical | Reported lower and upper endpoints of a 95% confidence interval for average life evaluation, when supplied. |
+| Six `Explained by:` fields | Numerical, modeled contributions | Log GDP per capita, social support, healthy life expectancy, freedom to make life choices, generosity, and perceptions of corruption. Values are contributions in life evaluation points, not dollars, years of life, or raw survey percentages. |
+| `Dystopia + residual` | Numerical, modeled remainder | The benchmark plus prediction residual. Can be negative; it is not another directly measured social indicator. |
 
-Flipper length and body mass are especially useful for exploring body size. Species helps distinguish overall patterns from within-group patterns. Bill dimensions offer an alternative way to compare shape.
+The main variables of interest are **score, rank, and confidence interval width**. They help compare countries without treating a rank as a perfectly precise measurement. The contribution fields are interesting for follow-up questions, provided their model-derived nature is explicit.
 
-### Descriptive statistics
+### Missing data
 
-Calculated directly from the included CSV using `analyze.py`. Missing values are omitted separately for each numerical variable. Each numerical summary below uses **342 observations**. Means and medians are rounded to two decimal places.
+| Original column | Missing in 2,116 rows | Missing in latest 147 |
+|---|---:|---:|
+| `Year` | 0 | 0 |
+| `Rank` | 0 | 0 |
+| `Country name` | 0 | 0 |
+| `Life evaluation (3-year average)` | 0 | 0 |
+| `Lower whisker` | 1,094 | 0 |
+| `Upper whisker` | 1,094 | 0 |
+| `Explained by: Log GDP per capita` | 1,097 | 0 |
+| `Explained by: Social support` | 1,097 | 0 |
+| `Explained by: Healthy life expectancy` | 1,100 | 1 |
+| `Explained by: Freedom to make life choices` | 1,099 | 1 |
+| `Explained by: Generosity` | 1,097 | 0 |
+| `Explained by: Perceptions of corruption` | 1,098 | 0 |
+| `Dystopia + residual` | 1,103 | 2 |
 
-| Variable | Minimum | Maximum | Mean | Median | Range | Unique observed values |
+No country–Year key is duplicated. Every row has a score, country label, year, and rank. The 1,094 observations with year labels through 2018 have no confidence interval endpoints. Historical factor coverage also has gaps. Missing historical components must not be filled with zero.
+
+In the latest snapshot, the missing component values occur in: **Healthy life expectancy: State of Palestine; Freedom to make life choices: Tajikistan; Dystopia + residual: Tajikistan, State of Palestine**. All of these observations remain in the chart because their scores and intervals are available. The detail panel shows unavailable components explicitly.
+
+### Descriptive statistics — latest snapshot only
+
+Statistics below use the source rows where `Year = 2025`. Each country/territory has equal weight; missing values are omitted separately for each variable. Numbers are rounded to three decimals for display. These are descriptive country-level summaries, **not a population-weighted estimate of global happiness**.
+
+| Variable | Valid n | Minimum | Maximum | Mean | Median | Range |
 |---|---:|---:|---:|---:|---:|---:|
-| Bill length (mm) | 32.10 | 59.60 | 43.92 | 44.45 | 27.50 | 164 |
-| Bill depth (mm) | 13.10 | 21.50 | 17.15 | 17.30 | 8.40 | 80 |
-| Flipper length (mm) | 172 | 231 | 200.92 | 197 | 59 | 55 |
-| Body mass (g) | 2,700 | 6,300 | 4,201.75 | 4,050 | 3,600 | 94 |
+| Life evaluation (3-year average) | 147 | 1.446 | 7.764 | 5.650 | 5.937 | 6.318 |
+| Contribution: Log GDP per capita | 147 | 0.000 | 2.167 | 1.535 | 1.565 | 2.167 |
+| Contribution: Social support | 147 | 0.000 | 1.720 | 1.205 | 1.292 | 1.720 |
+| Contribution: Healthy life expectancy | 146 | 0.000 | 1.238 | 0.616 | 0.607 | 1.238 |
+| Dystopia + residual | 145 | -0.295 | 2.701 | 1.163 | 1.164 | 2.996 |
+| CI width (`Upper whisker − Lower whisker`) | 147 | 0.124 | 0.621 | 0.221 | 0.205 | 0.497 |
 
-| Species | Count | Share of all 344 rows | Valid mass observations | Mean mass (g) |
-|---|---:|---:|---:|---:|
-| Adelie | 152 | 44.19% | 151 | 3,700.66 |
-| Chinstrap | 68 | 19.77% | 68 | 3,733.09 |
-| Gentoo | 124 | 36.05% | 123 | 5,076.02 |
+- **147 unique country/territory labels**, 147 source ranks, and **145 distinct rounded score values** occur in the latest snapshot.
+- **71 / 147 (48.30%)** have scores of at least 6.000. **13 / 147 (8.84%)** have scores below 4.000.
+- The highest score is **Finland: 7.764**, with interval **7.690–7.837**. The lowest is **Afghanistan: 1.446**, with interval **1.348–1.544**. Their score difference is **6.318 points**.
+- The highest-ranked 20 scores span **0.943 points**, compared with **2.860 points** among the lowest-ranked 20. Equal-size ranking groups have quite different spreads.
+- Iceland (**7.540**, CI **7.449–7.630**) and Denmark (**7.539**, CI **7.446–7.631**) illustrate how adjacent ranks can have almost identical rounded scores and strongly overlapping intervals. No formal pairwise significance test is performed here.
 
-Percentages may sum to 100.01% due to rounding. Islands: Biscoe 168, Dream 124, Torgersen 52. Years: 2007 has 110 rows, 2008 has 114, and 2009 has 120. Sex: 168 male, 165 female, 11 missing. These variables have 3, 3, and 2 distinct nonmissing values respectively.
+### Unusual values and limitations
 
-### Missing values, unusual patterns, and limitations
+1. **Negative model remainders:** Dystopia + residual is negative for Hong Kong SAR of China, Sri Lanka, and Botswana. These values are retained, not treated as data-entry errors. A prediction residual can be negative.
+2. **Zero contributions:** A modeled contribution of zero is a valid number relative to the report’s benchmark. It does not mean a country has zero GDP, no lifespan, or no happiness.
+3. **Historical coverage:** Year 2013 is absent from the workbook, and the number of entries varies from 137 to 158 per year label. Country labels can also change. Historical comparisons require aligned names and verified reporting periods.
+4. **Overlapping periods:** Successive three-year windows share observations. They are not independent annual measurements, and they can smooth short-term events.
+5. **Survey uncertainty:** Scores are estimates. Confidence intervals describe uncertainty around country averages, not the distribution of individual happiness. Overlap alone is not a formal test of equality.
+6. **Model versus measurement:** The score comes from life evaluations. The six contribution fields explain variation using a model and do not establish causal effects. A plot of a contribution against the score would partly reflect how the model was constructed.
+7. **Aggregation:** National averages hide differences within countries. This file lacks individual age, gender, income, survey sample sizes, and population weights needed for many deeper questions.
+8. **Rounding:** Source values are rounded to three decimals. Some scores tie after rounding, and contribution sums may differ slightly from the score. Published ranks are preserved instead of recomputed from rounded scores.
 
-- `NA` marks missing data. The same two observations lack all four body measurements (2/344 = 0.58%). Sex is missing in 11 observations (3.20%). Nine of those still have usable chart measurements and remain in the chart.
-- The chart excludes only rows without both plotted measurements, leaving 342 points before filtering. It displays the matching sample size and exclusions for each filter combination.
-- Gentoo penguins have a substantially higher mean body mass in this sample. Adelie and Chinstrap means are relatively similar. These are descriptive sample findings, not significance tests or population estimates.
-- Species and island are intertwined: all 124 Gentoo rows are from Biscoe, and all 68 Chinstrap rows are from Dream. Adelie appears on all three islands (44 Biscoe, 56 Dream, 52 Torgersen). An island comparison would therefore also reflect species composition.
-- Species sample sizes are unequal. Counts describe sampling, not the relative abundance of wild penguin populations.
-- Rounded measurements can overlap in a scatterplot. Partial transparency helps, but identical points can still hide one another; the record selector exposes every plotted row.
-- Extreme observed measurements are retained. Being unusually large or small does not itself demonstrate a data error.
-- This is a regional, three-year observational sample. It cannot establish causal effects, long-term climate trends, or patterns for all penguins. Year comparisons could reflect changes in the sampled groups.
-- The simplified file has no stable individual identifier. Displayed row numbers identify CSV observations only, and cannot support tracking individuals over time.
+## Step 4 — Ask questions
 
-## Step 4 — Questions
+1. **Ranking and uncertainty:** Which countries have the highest and lowest average life evaluations, and how close are neighboring ranks once confidence intervals are shown? The implemented chart addresses this directly.
+2. **Distribution:** Is the range of scores wider among the lowest-ranked 20 than among the highest-ranked 20? What proportion of countries have scores above a chosen threshold?
+3. **Model relationship:** Among the latest observations with complete values, how is the modeled social-support contribution associated with life evaluation? Which countries depart from the overall association? Interpret this as model exploration, not causal evidence.
+4. **Change over time:** For countries with consistent identifiers and comparable reporting windows, how did scores change between selected snapshots? Compare actual score differences, not only ranks, and acknowledge overlapping windows.
+5. **Unusual observations:** Which countries have the largest positive or negative Dystopia + residual values, and which additional data would be needed to investigate them?
 
-1. **Relationship:** Does body mass tend to rise with flipper length within each species, and how does that compare with the combined sample? The first chart supports visual inspection; correlation or regression would be a follow-up.
-2. **Comparison and distribution:** Which species has the highest median body mass, and how much do the species distributions overlap? Compare medians and distribution shapes instead of relying only on means.
-3. **Differences between groups:** Within each species, how do male and female body-mass distributions differ? Report the 11 missing sex values and denominators explicitly.
-4. **Geography:** Among Adelie penguins only, how do measurements differ across the three islands? Restricting species reduces one source of confounding, though sex and year could still differ.
-5. **Change over time:** Within a species and sex, how do measured body masses vary across 2007–2009? Treat the result as a comparison of sampled groups, not individual growth or a long-term trend.
+## Step 5 — Propose three uses and sketch them
 
-## Step 5 — Three proposed uses and visual sketches
+![Three conceptual chart designs](sketches.svg)
 
-![Three labeled design sketches](sketches.svg)
+The sketches are **conceptual wireframes**. Their marks show layouts, not additional computed findings.
 
-These are conceptual wireframes; their marks illustrate layouts, not additional calculated results.
-
-| Proposal | What it would show / do | Audience | Why it matters |
+| Proposal | What it shows / does | Audience | Why it matters |
 |---|---|---|---|
-| 1. Body-size explorer — implemented | Scatterplot of flipper length versus mass; species/year filters and observation details | Students and wildlife enthusiasts | Helps distinguish between-species separation from within-species variation |
-| 2. Distribution comparison | Box plots with individual points for mass by species; optional sex split | Biology students and researchers exploring the sample | Shows spread and overlap that a mean alone conceals; missing-sex rows need a separate category or explicit exclusion |
-| 3. Island sample profile | Stacked count bars for species within each island, with a count/percentage toggle | Readers evaluating sampling coverage | Reveals the uneven geographic composition and cautions against interpreting counts as population abundance |
+| 1. Rankings with uncertainty — implemented | Horizontal bars on a fixed 0–10 scale, confidence-interval whiskers, top/bottom/all groups, country search, and a detail panel | Students, general readers, and journalists | Makes both the size of score differences and the uncertainty visible, rather than presenting ranks alone |
+| 2. Distribution explorer — proposed | A histogram of country scores, with a selectable threshold and a selected country marker | Readers comparing one country with the broader sample | Shows concentration, spread, and tails; labels counts as countries rather than people |
+| 3. Country comparison over time — proposed | Lines for a small set of selected countries across verified comparable three-year windows; visible gaps for unavailable periods | Students and researchers exploring change | Separates score changes from ranking changes while exposing missing coverage and overlap between periods |
 
-## Step 6 — Interactive chart
+## Step 6 — Make one interactive D3 chart
 
-**Title:** Penguins, in proportion.  
-**Subtitle:** How does flipper length relate to body mass? Explore measurements of three penguin species sampled in Antarctica, 2007–2009.
+**Title:** A closer look at happiness.  
+**Subtitle:** How do countries compare when people evaluate their own lives? Explore average life evaluations and the uncertainty behind the rankings.
 
-- D3 v7.9.0 parses the CSV snapshot, creates linear scales and labeled axes, and binds observations to SVG marks.
-- The x-axis is flipper length (mm); the y-axis is body mass (g). Both use fixed, nonzero domains for consistent comparisons across filters.
-- Species uses both color and shape. A legend identifies the encodings.
-- Species and year dropdowns filter the data; Reset restores all 342 complete observations.
-- Hover or tap reveals species, year, island, sex, flipper length, mass, and CSV row number. The native record dropdown supports keyboard inspection of every plotted row. Escape dismisses the tooltip.
-- Data source, access date, exclusion rules, and license appear with the chart. The layout adapts to screen width.
+- **Scope:** Latest 147 country/territory observations, `Year = 2025`, corresponding to WHR 2026’s 2023–2025 averages. The initial view shows the 20 highest-ranked entries.
+- **Form:** Horizontal bars; the x-axis runs from 0 to 10 and remains fixed across filters. The y-axis identifies each country/territory and its published rank. Whiskers show the reported 95% confidence interval.
+- **Interactivity:** Switch between the highest 20, lowest 20, and all 147. Search across the full latest snapshot. Toggle confidence intervals. Hover for exact values, or click/focus a row to inspect the country and model decomposition. Reset restores the initial view.
+- **Access:** Native controls support keyboard navigation; chart rows can be focused and activated with Enter or Space. A collapsible HTML table shows every displayed row. Long charts scroll vertically; narrow screens can scroll the chart horizontally.
+- **Missing data policy:** No latest scores or intervals are missing, so all 147 are eligible. Unavailable model components remain null and appear as “Not available.” No imputation is performed.
+- **Attribution:** The chart links the official source, original workbook, downloadable full CSV, and this README.
 
-### Files and reproducibility
+### Open and reproduce
 
-- `index.html`, `style.css`, `chart.js`: working chart.
-- `data/penguins.csv`: downloaded source snapshot.
-- `data/penguins.js`: generated embedded copy for direct, offline opening.
-- `data/summary.json`: machine-readable calculated statistics.
-- `analyze.py`: rerun using `python3 analyze.py` from this folder; rebuilds both generated data files using only Python's standard library.
-- `sketches.svg`: three design proposals.
-- `vendor/d3.v7.min.js` and `vendor/LICENSE-d3`: vendored D3 and its ISC license.
+1. Open the [published chart](https://jieyishang7.github.io/js_data-visualization/js_data%20exploration/).
+2. For offline use, download the folder and open `index.html` in a browser. Keep its relative subfolders intact. Both D3 and the chart snapshot are local, so the chart does not require an internet connection. External reference links still require internet.
+3. Run `python3 analyze.py` from this folder to reproduce `data/summary.json` and `data/happiness.js` from the included CSV. It uses only Python’s standard library.
+4. To recreate the initial values-only CSV from the original Excel workbook, use pandas with an Excel reader: `pandas.read_excel("data/WHR26_Data_Figure_2.1.xlsx").to_csv("data/whr_figure_2_1.csv", index=False)`. The original workbook is never edited.
+
+### Project files
+
+| File | Purpose |
+|---|---|
+| `index.html`, `style.css`, `chart.js` | Interactive D3 chart and its presentation |
+| `data/WHR26_Data_Figure_2.1.xlsx` | Unchanged official source workbook |
+| `data/whr_figure_2_1.csv` | Full values-only export with original headers |
+| `data/happiness.js` | Derived latest-snapshot data, embedded for offline opening |
+| `data/summary.json` | Computed descriptive statistics and missing-value counts |
+| `analyze.py` | Reproducible calculations and chart-snapshot generation |
+| `sketches.svg` | Three proposed visualization designs |
+| `vendor/d3.v7.min.js`, `vendor/LICENSE-d3` | D3 v7.9.0 and its ISC license; the library license does not apply to the WHR data |
 
 ### References
 
-Horst, A. M., Hill, A. P., & Gorman, K. B. (2020). *palmerpenguins: Palmer Archipelago (Antarctica) penguin data*. https://doi.org/10.5281/zenodo.3960218
+- Helliwell, J. F., Layard, R., Sachs, J. D., De Neve, J.-E., Aknin, L. B., & Wang, S. (Eds.). (2026). *World Happiness Report 2026*. University of Oxford: Wellbeing Research Centre. [Data sharing and download](https://www.worldhappiness.report/data-sharing/).
+- World Happiness Report. [Frequently Asked Questions](https://www.worldhappiness.report/faq/). Definitions of life evaluation, confidence intervals, and modeled contributions.
+- World Happiness Report 2026, Chapter 2. [International evidence on happiness and social media](https://www.worldhappiness.report/ed/2026/international-evidence-on-happiness-and-social-media/). Figure 2.1, ranking period, and interpretation.
 
-Gorman, K. B., Williams, T. D., & Fraser, W. R. (2014). *Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus Pygoscelis).* PLOS ONE, 9(3), e90081. https://doi.org/10.1371/journal.pone.0090081
 
-### Browser checks
+### Validation
 
-Verified in a browser on October 13, 2026: initial view shows 342 / 344 records; Gentoo filter shows 123 / 124; Gentoo + 2009 shows 43 / 44; selecting row 269 reveals its unknown sex and 4,875 g mass; Reset restores 342 points. On small screens the chart can be scrolled horizontally to keep labels legible.
+The data checks confirm 2,116 rows, 13 columns, no duplicated country–Year keys, 147 latest observations, scores within 0–10, and every latest score inside its reported interval. Browser checks confirmed 20 initial rows, 20 lowest-ranked rows ending in Afghanistan, 147 rows in the all-country view and HTML table, country search and empty-search handling, missing components for Tajikistan, the confidence-interval toggle, keyboard selection, and Reset. No browser console errors were observed. A narrow viewport was checked for page overflow; the chart scrolls inside its container. The page was tested via HTTP; direct `file://` navigation is not supported by the test browser.

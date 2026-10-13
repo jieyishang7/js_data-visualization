@@ -1,101 +1,118 @@
 {
-  "rows": 344,
-  "columns": 8,
-  "variables": {
-    "species": {
-      "missing": 0,
-      "unique_nonmissing": 3,
-      "counts": {
-        "Adelie": 152,
-        "Gentoo": 124,
-        "Chinstrap": 68
-      }
+  "rows": 2116,
+  "columns": 13,
+  "country_labels": 168,
+  "year_counts": {
+    "2011": 156,
+    "2012": 156,
+    "2014": 158,
+    "2015": 157,
+    "2016": 155,
+    "2017": 156,
+    "2018": 156,
+    "2019": 153,
+    "2020": 149,
+    "2021": 146,
+    "2022": 137,
+    "2023": 143,
+    "2024": 147,
+    "2025": 147
+  },
+  "missing_full": {
+    "Year": 0,
+    "Rank": 0,
+    "Country name": 0,
+    "Life evaluation (3-year average)": 0,
+    "Lower whisker": 1094,
+    "Upper whisker": 1094,
+    "Explained by: Log GDP per capita": 1097,
+    "Explained by: Social support": 1097,
+    "Explained by: Healthy life expectancy": 1100,
+    "Explained by: Freedom to make life choices": 1099,
+    "Explained by: Generosity": 1097,
+    "Explained by: Perceptions of corruption": 1098,
+    "Dystopia + residual": 1103
+  },
+  "latest_missing": {
+    "Year": 0,
+    "Rank": 0,
+    "Country name": 0,
+    "Life evaluation (3-year average)": 0,
+    "Lower whisker": 0,
+    "Upper whisker": 0,
+    "Explained by: Log GDP per capita": 0,
+    "Explained by: Social support": 0,
+    "Explained by: Healthy life expectancy": 1,
+    "Explained by: Freedom to make life choices": 1,
+    "Explained by: Generosity": 0,
+    "Explained by: Perceptions of corruption": 0,
+    "Dystopia + residual": 2
+  },
+  "latest_stats": {
+    "Life evaluation (3-year average)": {
+      "n": 147,
+      "minimum": 1.446,
+      "maximum": 7.764,
+      "mean": 5.649857142857143,
+      "median": 5.937,
+      "range": 6.3180000000000005,
+      "unique": 145
     },
-    "island": {
-      "missing": 0,
-      "unique_nonmissing": 3,
-      "counts": {
-        "Torgersen": 52,
-        "Biscoe": 168,
-        "Dream": 124
-      }
+    "Explained by: Log GDP per capita": {
+      "n": 147,
+      "minimum": 0.0,
+      "maximum": 2.167,
+      "mean": 1.5349319727891155,
+      "median": 1.565,
+      "range": 2.167,
+      "unique": 138
     },
-    "bill_length_mm": {
-      "missing": 2,
-      "unique_nonmissing": 164,
-      "n": 342,
-      "minimum": 32.1,
-      "maximum": 59.6,
-      "mean": 43.9219298245614,
-      "median": 44.45,
-      "range": 27.5
+    "Explained by: Social support": {
+      "n": 147,
+      "minimum": 0.0,
+      "maximum": 1.72,
+      "mean": 1.2047619047619047,
+      "median": 1.292,
+      "range": 1.72,
+      "unique": 141
     },
-    "bill_depth_mm": {
-      "missing": 2,
-      "unique_nonmissing": 80,
-      "n": 342,
-      "minimum": 13.1,
-      "maximum": 21.5,
-      "mean": 17.151169590643274,
-      "median": 17.3,
-      "range": 8.4
+    "Explained by: Healthy life expectancy": {
+      "n": 146,
+      "minimum": 0.0,
+      "maximum": 1.238,
+      "mean": 0.6161232876712329,
+      "median": 0.607,
+      "range": 1.238,
+      "unique": 134
     },
-    "flipper_length_mm": {
-      "missing": 2,
-      "unique_nonmissing": 55,
-      "n": 342,
-      "minimum": 172.0,
-      "maximum": 231.0,
-      "mean": 200.91520467836258,
-      "median": 197.0,
-      "range": 59.0
-    },
-    "body_mass_g": {
-      "missing": 2,
-      "unique_nonmissing": 94,
-      "n": 342,
-      "minimum": 2700.0,
-      "maximum": 6300.0,
-      "mean": 4201.754385964912,
-      "median": 4050.0,
-      "range": 3600.0
-    },
-    "sex": {
-      "missing": 11,
-      "unique_nonmissing": 2,
-      "counts": {
-        "male": 168,
-        "female": 165
-      }
-    },
-    "year": {
-      "missing": 0,
-      "unique_nonmissing": 3,
-      "counts": {
-        "2007": 110,
-        "2008": 114,
-        "2009": 120
-      }
+    "Dystopia + residual": {
+      "n": 145,
+      "minimum": -0.295,
+      "maximum": 2.701,
+      "mean": 1.1632,
+      "median": 1.164,
+      "range": 2.996,
+      "unique": 137
     }
   },
-  "species_summary": {
-    "Adelie": {
-      "rows": 152,
-      "percent": 44.18604651162791,
-      "mass_n": 151,
-      "mean_mass_g": 3700.662251655629
-    },
-    "Chinstrap": {
-      "rows": 68,
-      "percent": 19.767441860465116,
-      "mass_n": 68,
-      "mean_mass_g": 3733.0882352941176
-    },
-    "Gentoo": {
-      "rows": 124,
-      "percent": 36.04651162790697,
-      "mass_n": 123,
-      "mean_mass_g": 5076.016260162602
-    }
-  }
+  "ci_width": {
+    "n": 147,
+    "minimum": 0.124,
+    "maximum": 0.621,
+    "mean": 0.22085714285714286,
+    "median": 0.205,
+    "range": 0.497,
+    "unique": 106
+  },
+  "latest_count": 147,
+  "at_least_6": 71,
+  "below_4": 13,
+  "top_20_range": 0.9430000000000005,
+  "bottom_20_range": 2.8600000000000003,
+  "negative_residual_countries": [
+    "Hong Kong SAR of China",
+    "Sri Lanka",
+    "Botswana"
+  ],
+  "xlsx_sha256": "576e382655cec3ae704a0b41cd2c04465b87cd84b7f131a0c4fa26d41f6d8028"
 }

@@ -1,7 +1,60 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Penguins, in proportion</title><link rel="stylesheet" href="style.css"></head>
-<body><main><header><p class="eyebrow">FIELD NOTES / 01 · PALMER ARCHIPELAGO</p><h1>Penguins, in proportion.</h1><p class="intro">How does flipper length relate to body mass? Explore measurements of three penguin species sampled in Antarctica, 2007–2009.</p></header>
-<section class="controls" aria-label="Chart filters"><label>Species<select id="species"><option value="all">All species</option><option>Adelie</option><option>Chinstrap</option><option>Gentoo</option></select></label><label>Year<select id="year"><option value="all">All years</option><option>2007</option><option>2008</option><option>2009</option></select></label><button id="reset">Reset filters</button><p id="count" aria-live="polite"></p></section>
-<section class="card"><div class="legend"><span class="adelie">● Adélie</span><span class="chinstrap">▲ Chinstrap</span><span class="gentoo">■ Gentoo</span></div><p class="hint">Hover or tap a point for its measurements. Use the record selector below to inspect any plotted row with a keyboard.</p><div id="chart"></div><div class="record"><label>Inspect record <select id="record"></select></label><p id="details" aria-live="polite">Choose a record to see its measurements.</p></div></section>
-<aside><h2>Look beyond the overall pattern</h2><p>Gentoo penguins occupy the heavier, longer-flippered part of this sample. Filter by species to see how much of the overall relationship is associated with differences between groups.</p><p class="small">Each mark represents one sampled penguin. Two of 344 rows lack both plotted measurements and are excluded. Rows with unknown sex are retained. Axes remain fixed when filtering; neither axis starts at zero.</p></aside>
-<footer>Source: <a href="https://allisonhorst.github.io/palmerpenguins/">Palmer Penguins</a> · Kristen Gorman &amp; Palmer Station LTER · CC0.<br>Accessed October 13, 2026 · <a href="README.md">Exploration &amp; methodology</a> · <a href="sketches.svg">Three proposed designs</a><p>Built with D3 v7.9.0. Local data and library included for offline use.</p></footer></main><div id="tooltip" role="status" hidden></div><script src="vendor/d3.v7.min.js"></script><script src="data/penguins.js"></script><script src="chart.js"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>World Happiness — A closer look at the rankings</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <p class="eyebrow">DATA EXPLORATION / WORLD HAPPINESS REPORT 2026</p>
+    <h1>A closer look<br>at happiness.</h1>
+    <p class="intro">How do countries compare when people evaluate their own lives? Explore average life evaluations and the uncertainty behind the rankings.</p>
+    <div class="meta"><span><strong>147</strong> countries &amp; territories</span><span><strong>2023–2025</strong> survey window</span><span><strong>0–10</strong> life evaluation scale</span></div>
+  </header>
+
+  <section class="controls" aria-label="Chart controls">
+    <label for="view">Show<select id="view"><option value="top">20 highest ranked</option><option value="bottom">20 lowest ranked</option><option value="all">All 147 countries &amp; territories</option></select></label>
+    <label for="search">Find a country<input id="search" type="search" placeholder="Try China, Finland, or United…" autocomplete="off" aria-describedby="search-help"></label>
+    <label class="check"><input id="intervals" type="checkbox" checked> Show 95% confidence intervals</label>
+    <button id="reset" type="button">Reset</button>
+  </section>
+  <p id="search-help" class="small">Search checks all 147 entries, regardless of the selected group. Clear the search to return to that group.</p>
+
+  <div class="layout">
+    <section class="chart-card" aria-labelledby="chart-title">
+      <div class="chart-heading"><h2 id="chart-title">Life evaluation by country</h2><p id="count" aria-live="polite"></p></div>
+      <div class="legend"><span><i class="bar-key"></i> Average life evaluation</span><span><i class="interval-key"></i> 95% confidence interval</span></div>
+      <p class="hint">Select a bar, country label, or keyboard-focusable row to inspect its values. On small screens, swipe the chart horizontally.</p>
+      <div id="chart" tabindex="0" aria-label="Scrollable life evaluation chart"></div>
+      <p id="empty" hidden>No matching countries or territories. Try another name or reset the filters.</p>
+      <details class="table-disclosure"><summary>View the displayed data as a table</summary><div class="table-scroll"><table><thead><tr><th scope="col">Rank</th><th scope="col">Country / territory</th><th scope="col">Score</th><th scope="col">95% CI lower</th><th scope="col">95% CI upper</th></tr></thead><tbody id="data-table"></tbody></table></div></details>
+    </section>
+
+    <aside class="detail-card" aria-labelledby="detail-title">
+      <p class="eyebrow">COUNTRY DETAIL</p>
+      <div id="details" aria-live="polite"><h2 id="detail-title">Select a country</h2></div>
+      <h3>How to read the chart</h3>
+      <p>Longer bars indicate a higher average life evaluation. Thin whiskers show the reported 95% confidence interval for that average.</p>
+      <p>Small rank differences can accompany overlapping intervals. Overlap alone is not a formal test of whether two countries differ.</p>
+      <p class="small">The score summarizes residents’ own 0–10 ratings of their lives. It is not calculated by adding six raw economic and social indicators.</p>
+    </aside>
+  </div>
+
+  <section class="notes"><h2>What stands out?</h2><p>The highest 20 scores span <strong>0.943 points</strong>; the lowest 20 span <strong>2.860 points</strong>. Switch between the groups to compare their spread on the same 0–10 axis.</p><p>The full workbook contains 2,116 rows across 14 year labels. This first chart uses only its latest 147 rows (Year = 2025), which correspond to the 2026 report’s 2023–2025 ranking window. All 147 have complete scores and confidence intervals.</p></section>
+
+  <footer>
+    <p>Source: <a href="https://www.worldhappiness.report/data-sharing/">World Happiness Report, Figure 2.1 data</a>. University of Oxford Wellbeing Research Centre; underlying life evaluations from the Gallup World Poll. Accessed October 13, 2026.</p>
+    <nav aria-label="Project files"><a href="https://github.com/jieyishang7/js_data-visualization/blob/main/js_data%20exploration/README.md">Read the exploration</a><a href="sketches.svg">Three design sketches</a><a href="data/whr_figure_2_1.csv" download>Download full CSV</a><a href="data/WHR26_Data_Figure_2.1.xlsx" download>Original Excel data</a></nav>
+    <p class="small">Publicly downloadable data; no CC0 or CC BY license is asserted. See the source’s access terms and the README. Built with D3 v7.9.0; chart data and library are included locally.</p>
+  </footer>
+</main>
+<div id="tooltip" role="status" hidden></div>
+<noscript>This chart requires JavaScript. The CSV and README remain available from the links above.</noscript>
+<script src="vendor/d3.v7.min.js"></script>
+<script src="data/happiness.js"></script>
+<script src="chart.js"></script>
+</body>
+</html>
