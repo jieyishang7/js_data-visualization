@@ -1,0 +1,101 @@
+{
+  "rows": 344,
+  "columns": 8,
+  "variables": {
+    "species": {
+      "missing": 0,
+      "unique_nonmissing": 3,
+      "counts": {
+        "Adelie": 152,
+        "Gentoo": 124,
+        "Chinstrap": 68
+      }
+    },
+    "island": {
+      "missing": 0,
+      "unique_nonmissing": 3,
+      "counts": {
+        "Torgersen": 52,
+        "Biscoe": 168,
+        "Dream": 124
+      }
+    },
+    "bill_length_mm": {
+      "missing": 2,
+      "unique_nonmissing": 164,
+      "n": 342,
+      "minimum": 32.1,
+      "maximum": 59.6,
+      "mean": 43.9219298245614,
+      "median": 44.45,
+      "range": 27.5
+    },
+    "bill_depth_mm": {
+      "missing": 2,
+      "unique_nonmissing": 80,
+      "n": 342,
+      "minimum": 13.1,
+      "maximum": 21.5,
+      "mean": 17.151169590643274,
+      "median": 17.3,
+      "range": 8.4
+    },
+    "flipper_length_mm": {
+      "missing": 2,
+      "unique_nonmissing": 55,
+      "n": 342,
+      "minimum": 172.0,
+      "maximum": 231.0,
+      "mean": 200.91520467836258,
+      "median": 197.0,
+      "range": 59.0
+    },
+    "body_mass_g": {
+      "missing": 2,
+      "unique_nonmissing": 94,
+      "n": 342,
+      "minimum": 2700.0,
+      "maximum": 6300.0,
+      "mean": 4201.754385964912,
+      "median": 4050.0,
+      "range": 3600.0
+    },
+    "sex": {
+      "missing": 11,
+      "unique_nonmissing": 2,
+      "counts": {
+        "male": 168,
+        "female": 165
+      }
+    },
+    "year": {
+      "missing": 0,
+      "unique_nonmissing": 3,
+      "counts": {
+        "2007": 110,
+        "2008": 114,
+        "2009": 120
+      }
+    }
+  },
+  "species_summary": {
+    "Adelie": {
+      "rows": 152,
+      "percent": 44.18604651162791,
+      "mass_n": 151,
+      "mean_mass_g": 3700.662251655629
+    },
+    "Chinstrap": {
+      "rows": 68,
+      "percent": 19.767441860465116,
+      "mass_n": 68,
+      "mean_mass_g": 3733.0882352941176
+    },
+    "Gentoo": {
+      "rows": 124,
+      "percent": 36.04651162790697,
+      "mass_n": 123,
+      "mean_mass_g": 5076.016260162602
+    }
+  }
+}
