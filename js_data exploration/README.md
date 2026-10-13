@@ -2,7 +2,7 @@
 
 Data exploration and an interactive D3 chart using the **World Happiness Report 2026** public Figure 2.1 workbook.
 
-**[Open the live chart](https://jieyishang7.github.io/js_data-visualization/js_data%20exploration/)**
+**[Open the live chart](https://jieyishang7.github.io/js_data-visualization/js_data%20exploration/?v=whr2026-2)**
 
 The chart compares average life evaluations for **147 countries and territories**, with the reported 95% confidence intervals. The 2026 report uses the **2023–2025** survey window; those observations are labeled **Year = 2025** in the workbook. These are not annual 2025 scores.
 
@@ -137,7 +137,7 @@ The sketches are **conceptual wireframes**. Their marks show layouts, not additi
 
 ### Open and reproduce
 
-1. Open the [published chart](https://jieyishang7.github.io/js_data-visualization/js_data%20exploration/).
+1. Open the [published chart](https://jieyishang7.github.io/js_data-visualization/js_data%20exploration/?v=whr2026-2).
 2. For offline use, download the folder and open `index.html` in a browser. Keep its relative subfolders intact. Both D3 and the chart snapshot are local, so the chart does not require an internet connection. External reference links still require internet.
 3. Run `python3 analyze.py` from this folder to reproduce `data/summary.json` and `data/happiness.js` from the included CSV. It uses only Python’s standard library.
 4. To recreate the initial values-only CSV from the original Excel workbook, use pandas with an Excel reader: `pandas.read_excel("data/WHR26_Data_Figure_2.1.xlsx").to_csv("data/whr_figure_2_1.csv", index=False)`. The original workbook is never edited.
