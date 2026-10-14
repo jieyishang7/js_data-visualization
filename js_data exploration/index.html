@@ -1,8 +1,213 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Anatomy of Happiness</title><link rel="stylesheet" href="style.css?v=20261013d"><script defer src="vendor/d3.v7.min.js"></script><script defer src="data/happiness.js?v=20261013d"></script><script defer src="data/history.js?v=20261013d"></script><script defer src="chart.js?v=20261013d"></script></head><body>
-<header><a class="wordmark" href="#top">WORLD HAPPINESS / AN EXPLORATION</a><nav aria-label="Sections"><a href="#time">A / Over time</a><a href="#factors">B / Factors</a><a href="#profiles">C / Profiles</a></nav></header>
-<main id="top"><div class="hero"><p class="eyebrow">WORLD HAPPINESS REPORT 2026</p><h1>The Anatomy<br>of <em>Happiness</em></h1><p class="subtitle">Exploring Global Happiness and the Factors<br class="desktop"> Associated with Life Satisfaction</p><p class="intro"><a href="https://github.com/jieyishang7/js_data-visualization/tree/main/js_data%20exploration">github.com/jieyishang7/js_data-visualization/tree/main/js_data exploration</a></p><div class="facts"><span><b>147</b> countries & territories in 2023–2025</span><span><b>14</b> historical snapshots</span><span><b>6</b> modeled contributions</span></div></div>
-<section id="time"><p class="eyebrow">A / FOLLOW THE CHANGE</p><h2>Happiness over time</h2><p class="lead">Country averages move in different directions. Compare their paths across the available report snapshots.</p><p class="note">These are pooled survey averages, not annual scores. From the 2012 snapshot onward, nominal ranking windows span three years and usually overlap. The 2011 snapshot covers <strong>2005–2011</strong>. The x-axis uses the window’s end year; no snapshot exists for 2013. Country survey coverage varies; some historical rankings include older-survey exceptions. <a href="README.md#6-time-windows-and-interpretation">Period notes</a>.</p>
-<div class="controls"><label>From snapshot <select id="a-start"></select></label><label>To snapshot <select id="a-end"></select></label><label>Emphasize endpoint change <select id="a-trend"><option value="all">All selected countries</option><option value="up">Increasing</option><option value="down">Decreasing</option></select></label><button id="a-reset">Reset comparison</button></div><div id="a-picker"></div><p id="a-status" class="status" role="status"></p><div class="chart-wrap"><svg id="chart-a" aria-label="Life evaluation by snapshot year" role="img"></svg></div><div id="a-legend" class="legend"></div><p class="caption">Straight segments connect adjacent available snapshots; breaks mark a missing country record or the absent 2013 snapshot. Endpoint changes describe the selected windows, not a steady trend or a significance test.</p><details><summary>View selected time-series data</summary><div id="a-table" class="table-wrap"></div></details><p class="source">Source: <a href="https://www.worldhappiness.report/data-sharing/">World Happiness Report 2026, Figure 2.1 workbook</a>. Original country names are retained in details; Swaziland is matched to Eswatini for comparison.</p></section>
-<section id="factors"><p class="eyebrow">B / EXPLORE THE MODEL</p><h2>Happiness & explanatory factors</h2><p class="lead">Where do countries sit when a modeled contribution is compared with their observed happiness score?</p><p class="note">The x-axis shows the report’s <strong>modeled contribution in score points</strong>, not raw GDP, years of life, or survey percentages. These contributions are part of a fitted decomposition. Patterns here do not establish causation or independently identify the strongest raw factor.</p><div class="controls"><label>Modeled contribution <select id="b-factor"></select></label><label>Filter country names <input id="b-filter" type="search" placeholder="e.g. China"></label><label>Highlight country <select id="b-highlight"></select></label><button id="b-reset">Reset scatterplot</button></div><p class="status" id="b-status" role="status"></p><div class="chart-wrap"><svg id="chart-b" role="img" aria-label="Modeled contribution versus life evaluation"></svg></div><p class="caption">One point per country or territory, 2023–2025. Hover, focus or tap a point for its exact contribution, score and 95% confidence interval. Missing values are excluded only for the selected contribution. No fitted line is shown.</p><details><summary>View plotted scatterplot data</summary><div id="b-table" class="table-wrap"></div></details><p class="source">Source: <a href="https://www.worldhappiness.report/data-sharing/">World Happiness Report 2026, Figure 2.1 workbook</a>.</p></section>
-<section id="profiles"><p class="eyebrow">C / LOOK BENEATH SIMILAR SCORES</p><h2>Happiness contribution profiles</h2><p class="lead">Nearly equal happiness scores can accompany very different modeled profiles.</p><div class="callout"><b>Benin 4.393 · Lesotho 4.375</b><p>Only 0.018 points apart in observed life evaluation, but social-support contributions of 0.087 and 1.135 points. Compare the pair across all six components.</p><button id="c-pair">Compare Benin & Lesotho</button></div><div class="controls"><label>Sort countries by <select id="c-sort"></select></label><button id="c-reset">Reset profiles</button></div><div id="c-picker"></div><p class="status" id="c-status" role="status"></p><div id="c-scale" class="scale"><span>Modeled contribution (score points)</span><div class="gradient"></div><div class="scale-ticks"><span>0</span><span>1.1</span><span>2.2</span></div><small>One shared scale for all columns. N/A = missing, never zero.</small></div><div class="chart-wrap"><svg id="chart-c" role="img" aria-label="Six modeled contributions by selected country"></svg></div><p class="caption">Values are shown directly in every cell. Observed life evaluation is separate from the six contributions. Hover, focus or tap for score uncertainty and the signed “Dystopia + residual” remainder. This remainder is needed for the full decomposition and can be negative.</p><details><summary>View selected contribution data</summary><div id="c-table" class="table-wrap"></div></details><p class="source">Source: <a href="https://www.worldhappiness.report/data-sharing/">World Happiness Report 2026, Figure 2.1 workbook</a>. Latest snapshot: 2023–2025.</p></section>
-<footer><h2>Reading the evidence</h2><p>Life evaluation is measured on a 0–10 scale. Scores are country averages, not descriptions of every resident. Survey coverage varies, uncertainty matters, and overlapping windows are not independent annual observations. The six modeled contributions are explanatory estimates, not proven causal effects.</p><a href="README.md">Dataset, research questions & methods</a> · <a href="AI_ASSISTANCE.md">AI assistance</a> · <a href="data/WHR26_Data_Figure_2.1.xlsx">Original workbook</a><p>Data accessed October 13, 2026. Built with D3.js v7. All calculations preserve source precision; displayed values are rounded.</p></footer></main><div id="tooltip" role="status" aria-live="polite" hidden></div></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>The Anatomy of Happiness</title>
+    <link rel="stylesheet" href="style.css?v=20261013d" />
+    <script defer src="vendor/d3.v7.min.js"></script>
+    <script defer src="data/happiness.js?v=20261013d"></script>
+    <script defer src="data/history.js?v=20261013d"></script>
+    <script defer src="chart.js?v=20261013d"></script>
+  </head>
+  <body>
+    <header>
+      <a class="wordmark" href="#top">WORLD HAPPINESS / AN EXPLORATION</a>
+      <nav aria-label="Sections">
+        <a href="#time">A / Over time</a><a href="#factors">B / Factors</a
+        ><a href="#profiles">C / Profiles</a>
+      </nav>
+    </header>
+    <main id="top">
+      <div class="hero">
+        <p class="eyebrow">WORLD HAPPINESS REPORT 2026</p>
+        <h1>The Anatomy<br />of <em>Happiness</em></h1>
+        <p class="subtitle">
+          Exploring Global Happiness and the Factors<br class="desktop" />
+          Associated with Life Satisfaction
+        </p>
+        <p class="intro">
+          <a
+            href="https://github.com/jieyishang7/js_data-visualization/tree/main/js_data%20exploration"
+            >github.com/jieyishang7/js_data-visualization/tree/main/js_data exploration</a
+          >
+        </p>
+        <div class="facts">
+          <span><b>147</b> countries & territories in 2023–2025</span
+          ><span><b>14</b> historical snapshots</span><span><b>6</b> modeled contributions</span>
+        </div>
+      </div>
+      <section id="time">
+        <p class="eyebrow">A / FOLLOW THE CHANGE</p>
+        <h2>Happiness over time</h2>
+        <p class="lead">
+          Country averages move in different directions. Compare their paths across the available
+          report snapshots.
+        </p>
+        <p class="note">
+          These are pooled survey averages, not annual scores. From the 2012 snapshot onward,
+          nominal ranking windows span three years and usually overlap. The 2011 snapshot covers
+          <strong>2005–2011</strong>. The x-axis uses the window’s end year; no snapshot exists for
+          2013. Country survey coverage varies; some historical rankings include older-survey
+          exceptions. <a href="README.md#6-time-windows-and-interpretation">Period notes</a>.
+        </p>
+        <div class="controls">
+          <label
+            >From snapshot
+            <select id="a-start"></select></label
+          ><label
+            >To snapshot
+            <select id="a-end"></select></label
+          ><label
+            >Emphasize endpoint change
+            <select id="a-trend">
+              <option value="all">All selected countries</option>
+              <option value="up">Increasing</option>
+              <option value="down">Decreasing</option>
+            </select></label
+          ><button id="a-reset">Reset comparison</button>
+        </div>
+        <div id="a-picker"></div>
+        <p id="a-status" class="status" role="status"></p>
+        <div class="chart-wrap">
+          <svg id="chart-a" aria-label="Life evaluation by snapshot year" role="img"></svg>
+        </div>
+        <div id="a-legend" class="legend"></div>
+        <p class="caption">
+          Straight segments connect adjacent available snapshots; breaks mark a missing country
+          record or the absent 2013 snapshot. Endpoint changes describe the selected windows, not a
+          steady trend or a significance test.
+        </p>
+        <details>
+          <summary>View selected time-series data</summary>
+          <div id="a-table" class="table-wrap"></div>
+        </details>
+        <p class="source">
+          Source:
+          <a href="https://www.worldhappiness.report/data-sharing/"
+            >World Happiness Report 2026, Figure 2.1 workbook</a
+          >. Original country names are retained in details; Swaziland is matched to Eswatini for
+          comparison.
+        </p>
+      </section>
+      <section id="factors">
+        <p class="eyebrow">B / EXPLORE THE MODEL</p>
+        <h2>Happiness & explanatory factors</h2>
+        <p class="lead">
+          Where do countries sit when a modeled contribution is compared with their observed
+          happiness score?
+        </p>
+        <p class="note">
+          The x-axis shows the report’s <strong>modeled contribution in score points</strong>, not
+          raw GDP, years of life, or survey percentages. These contributions are part of a fitted
+          decomposition. Patterns here do not establish causation or independently identify the
+          strongest raw factor.
+        </p>
+        <div class="controls">
+          <label
+            >Modeled contribution
+            <select id="b-factor"></select></label
+          ><label
+            >Filter country names
+            <input id="b-filter" type="search" placeholder="e.g. China" /></label
+          ><label
+            >Highlight country
+            <select id="b-highlight"></select></label
+          ><button id="b-reset">Reset scatterplot</button>
+        </div>
+        <p class="status" id="b-status" role="status"></p>
+        <div class="chart-wrap">
+          <svg
+            id="chart-b"
+            role="img"
+            aria-label="Modeled contribution versus life evaluation"
+          ></svg>
+        </div>
+        <p class="caption">
+          One point per country or territory, 2023–2025. Hover, focus or tap a point for its exact
+          contribution, score and 95% confidence interval. Missing values are excluded only for the
+          selected contribution. No fitted line is shown.
+        </p>
+        <details>
+          <summary>View plotted scatterplot data</summary>
+          <div id="b-table" class="table-wrap"></div>
+        </details>
+        <p class="source">
+          Source:
+          <a href="https://www.worldhappiness.report/data-sharing/"
+            >World Happiness Report 2026, Figure 2.1 workbook</a
+          >.
+        </p>
+      </section>
+      <section id="profiles">
+        <p class="eyebrow">C / LOOK BENEATH SIMILAR SCORES</p>
+        <h2>Happiness contribution profiles</h2>
+        <p class="lead">
+          Nearly equal happiness scores can accompany very different modeled profiles.
+        </p>
+        <div class="callout">
+          <b>Benin 4.393 · Lesotho 4.375</b>
+          <p>
+            Only 0.018 points apart in observed life evaluation, but social-support contributions of
+            0.087 and 1.135 points. Compare the pair across all six components.
+          </p>
+          <button id="c-pair">Compare Benin & Lesotho</button>
+        </div>
+        <div class="controls">
+          <label
+            >Sort countries by
+            <select id="c-sort"></select></label
+          ><button id="c-reset">Reset profiles</button>
+        </div>
+        <div id="c-picker"></div>
+        <p class="status" id="c-status" role="status"></p>
+        <div id="c-scale" class="scale">
+          <span>Modeled contribution (score points)</span>
+          <div class="gradient"></div>
+          <div class="scale-ticks"><span>0</span><span>1.1</span><span>2.2</span></div>
+          <small>One shared scale for all columns. N/A = missing, never zero.</small>
+        </div>
+        <div class="chart-wrap">
+          <svg
+            id="chart-c"
+            role="img"
+            aria-label="Six modeled contributions by selected country"
+          ></svg>
+        </div>
+        <p class="caption">
+          Values are shown directly in every cell. Observed life evaluation is separate from the six
+          contributions. Hover, focus or tap for score uncertainty and the signed “Dystopia +
+          residual” remainder. This remainder is needed for the full decomposition and can be
+          negative.
+        </p>
+        <details>
+          <summary>View selected contribution data</summary>
+          <div id="c-table" class="table-wrap"></div>
+        </details>
+        <p class="source">
+          Source:
+          <a href="https://www.worldhappiness.report/data-sharing/"
+            >World Happiness Report 2026, Figure 2.1 workbook</a
+          >. Latest snapshot: 2023–2025.
+        </p>
+      </section>
+      <footer>
+        <h2>Reading the evidence</h2>
+        <p>
+          Life evaluation is measured on a 0–10 scale. Scores are country averages, not descriptions
+          of every resident. Survey coverage varies, uncertainty matters, and overlapping windows
+          are not independent annual observations. The six modeled contributions are explanatory
+          estimates, not proven causal effects.
+        </p>
+        <a href="README.md">Dataset, research questions & methods</a> ·
+        <a href="AI_ASSISTANCE.md">AI assistance</a> ·
+        <a href="data/WHR26_Data_Figure_2.1.xlsx">Original workbook</a>
+        <p>
+          Data accessed October 13, 2026. Built with D3.js v7. All calculations preserve source
+          precision; displayed values are rounded.
+        </p>
+      </footer>
+    </main>
+    <div id="tooltip" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

@@ -5,52 +5,94 @@ export of its sole worksheet, with original headers and blank cells preserved.
 This script reads that CSV, never treats a blank as zero, and selects Year=2025.
 Run: python3 analyze.py
 """
+
 from pathlib import Path
 import csv, json, statistics, hashlib
+
 ROOT = Path(__file__).resolve().parent
-DATA = ROOT / 'data'
-SCORE = 'Life evaluation (3-year average)'
-raw = list(csv.DictReader((DATA/'whr_figure_2_1.csv').open()))
-rows = [{k: (v if k == 'Country name' else (None if v == '' else float(v)))
-         for k,v in row.items()} for row in raw]
-latest = sorted([r for r in rows if r['Year'] == 2025],key=lambda r:r['Rank'])
+DATA = ROOT / "data"
+SCORE = "Life evaluation (3-year average)"
+raw = list(csv.DictReader((DATA / "whr_figure_2_1.csv").open()))
+rows = [
+    {k: (v if k == "Country name" else (None if v == "" else float(v))) for k, v in row.items()}
+    for row in raw
+]
+latest = sorted([r for r in rows if r["Year"] == 2025], key=lambda r: r["Rank"])
 assert len(rows) == 2116 and len(rows[0]) == 13
 assert len(latest) == 147
-assert len({(r['Year'],r['Country name']) for r in rows}) == len(rows)
+assert len({(r["Year"], r["Country name"]) for r in rows}) == len(rows)
 assert all(0 <= r[SCORE] <= 10 for r in rows)
-assert all(r['Lower whisker'] <= r[SCORE] <= r['Upper whisker'] for r in latest)
+assert all(r["Lower whisker"] <= r[SCORE] <= r["Upper whisker"] for r in latest)
+
 
 def describe(values):
     values = [v for v in values if v is not None]
-    return dict(n=len(values),minimum=min(values),maximum=max(values),
-                mean=statistics.mean(values),median=statistics.median(values),
-                range=max(values)-min(values),unique=len(set(values)))
+    return dict(
+        n=len(values),
+        minimum=min(values),
+        maximum=max(values),
+        mean=statistics.mean(values),
+        median=statistics.median(values),
+        range=max(values) - min(values),
+        unique=len(set(values)),
+    )
+
 
 summary = {
-    'rows':len(rows),'columns':len(rows[0]),
-    'country_labels':len({r['Country name'] for r in rows}),
-    'year_counts':{str(int(y)):sum(r['Year']==y for r in rows) for y in sorted({r['Year'] for r in rows})},
-    'missing_full':{k:sum(r[k] is None for r in rows) for k in rows[0]},
-    'latest_missing':{k:sum(r[k] is None for r in latest) for k in rows[0]},
-    'latest_stats':{k:describe([r[k] for r in latest]) for k in [SCORE,'Explained by: Log GDP per capita','Explained by: Social support','Explained by: Healthy life expectancy','Dystopia + residual']},
-    'ci_width':describe([round(r['Upper whisker']-r['Lower whisker'],3) for r in latest]),
-    'latest_count':len(latest),
-    'at_least_6':sum(r[SCORE]>=6 for r in latest),
-    'below_4':sum(r[SCORE]<4 for r in latest),
-    'top_20_range':latest[0][SCORE]-latest[19][SCORE],
-    'bottom_20_range':latest[-20][SCORE]-latest[-1][SCORE],
-    'negative_residual_countries':[r['Country name'] for r in latest if r['Dystopia + residual'] is not None and r['Dystopia + residual']<0],
-    'xlsx_sha256':hashlib.sha256((DATA/'WHR26_Data_Figure_2.1.xlsx').read_bytes()).hexdigest()
+    "rows": len(rows),
+    "columns": len(rows[0]),
+    "country_labels": len({r["Country name"] for r in rows}),
+    "year_counts": {
+        str(int(y)): sum(r["Year"] == y for r in rows) for y in sorted({r["Year"] for r in rows})
+    },
+    "missing_full": {k: sum(r[k] is None for r in rows) for k in rows[0]},
+    "latest_missing": {k: sum(r[k] is None for r in latest) for k in rows[0]},
+    "latest_stats": {
+        k: describe([r[k] for r in latest])
+        for k in [
+            SCORE,
+            "Explained by: Log GDP per capita",
+            "Explained by: Social support",
+            "Explained by: Healthy life expectancy",
+            "Dystopia + residual",
+        ]
+    },
+    "ci_width": describe([round(r["Upper whisker"] - r["Lower whisker"], 3) for r in latest]),
+    "latest_count": len(latest),
+    "at_least_6": sum(r[SCORE] >= 6 for r in latest),
+    "below_4": sum(r[SCORE] < 4 for r in latest),
+    "top_20_range": latest[0][SCORE] - latest[19][SCORE],
+    "bottom_20_range": latest[-20][SCORE] - latest[-1][SCORE],
+    "negative_residual_countries": [
+        r["Country name"]
+        for r in latest
+        if r["Dystopia + residual"] is not None and r["Dystopia + residual"] < 0
+    ],
+    "xlsx_sha256": hashlib.sha256((DATA / "WHR26_Data_Figure_2.1.xlsx").read_bytes()).hexdigest(),
 }
-(DATA/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+(DATA / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
 # Only the latest snapshot is needed for the first chart. Null stays null in JS.
-chart = [{'country':r['Country name'],'rank':int(r['Rank']),'year':int(r['Year']),
-          'score':r[SCORE],'low':r['Lower whisker'],'high':r['Upper whisker'],
-          'gdp':r['Explained by: Log GDP per capita'],'support':r['Explained by: Social support'],
-          'health':r['Explained by: Healthy life expectancy'],
-          'freedom':r['Explained by: Freedom to make life choices'],
-          'generosity':r['Explained by: Generosity'],
-          'corruption':r['Explained by: Perceptions of corruption'],
-          'residual':r['Dystopia + residual']} for r in latest]
-(DATA/'happiness.js').write_text('// Generated by analyze.py from the official WHR CSV snapshot.\nwindow.HAPPINESS_DATA = '+json.dumps(chart,ensure_ascii=False,allow_nan=False)+';\n')
-print(json.dumps(summary,indent=2))
+chart = [
+    {
+        "country": r["Country name"],
+        "rank": int(r["Rank"]),
+        "year": int(r["Year"]),
+        "score": r[SCORE],
+        "low": r["Lower whisker"],
+        "high": r["Upper whisker"],
+        "gdp": r["Explained by: Log GDP per capita"],
+        "support": r["Explained by: Social support"],
+        "health": r["Explained by: Healthy life expectancy"],
+        "freedom": r["Explained by: Freedom to make life choices"],
+        "generosity": r["Explained by: Generosity"],
+        "corruption": r["Explained by: Perceptions of corruption"],
+        "residual": r["Dystopia + residual"],
+    }
+    for r in latest
+]
+(DATA / "happiness.js").write_text(
+    "// Generated by analyze.py from the official WHR CSV snapshot.\nwindow.HAPPINESS_DATA = "
+    + json.dumps(chart, ensure_ascii=False, allow_nan=False)
+    + ";\n"
+)
+print(json.dumps(summary, indent=2))
