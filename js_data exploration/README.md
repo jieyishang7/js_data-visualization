@@ -1,167 +1,224 @@
-# A closer look at happiness
+# The Anatomy of Happiness
+## Exploring Global Happiness and the Factors Associated with Life Satisfaction
 
-Data exploration and an interactive D3 chart using the **World Happiness Report 2026** public Figure 2.1 workbook.
+A Data Exploration assignment built on the official World Happiness Report 2026 Figure 2.1 workbook, with three interactive D3 v7 views on one page.
 
-**[Open the live chart](https://jieyishang7.github.io/js_data-visualization/js_data%20exploration/?v=whr2026-2)**
+Open [the interactive project](index.html). To preview locally, run `python3 -m http.server 8765` from the folder that contains `js_data exploration`, then visit `http://127.0.0.1:8765/js_data%20exploration/`. D3 and all data are bundled locally.
 
-The chart compares average life evaluations for **147 countries and territories**, with the reported 95% confidence intervals. The 2026 report uses the **2023–2025** survey window; those observations are labeled **Year = 2025** in the workbook. These are not annual 2025 scores.
+Contents: [Step 2 — Dataset](#step-2--document-the-dataset) · [Step 3 — Exploration](#step-3--explore-the-data) · [Step 4 — Questions](#step-4--ask-questions) · [Step 5 — Proposals A, B, C](#step-5--three-proposed-uses) · [Step 6 — Chart](#step-6--the-interactive-chart)
 
-## Step 1 — Find a dataset
+> **Important — what the six “explanatory factors” are.** The workbook contains six columns named *Explained by: Log GDP per capita, Social support, Healthy life expectancy, Freedom to make life choices, Generosity,* and *Perceptions of corruption*. These are **modeled contributions**: the report’s estimate of how much of each country’s score its regression model attributes to each factor, measured in life-evaluation points. They are **not raw indicators** (not dollars, years of life, or survey percentages), and they are **not proven causes of happiness**. The happiness score itself comes from survey respondents’ own life evaluations; it is not calculated from these six columns. See the [official FAQ](https://www.worldhappiness.report/faq/).
 
-The selected topic is how people evaluate their lives around the world. This dataset supports exploration of rankings, distributions, uncertainty, historical comparisons, and model-based explanations. It is especially useful for asking whether a rank difference corresponds to a meaningful score difference.
+---
 
-The official free file is suitable for this assignment because it is publicly downloadable, structured as an Excel table, and contains 2,116 country–year-label observations. Restricted Gallup microdata are not needed for this project.
+## Step 2 — Document the Dataset
 
-## Step 2 — Document the dataset
-
-| Item | Description |
+| Item | Details |
 |---|---|
-| Dataset name | World Happiness Report 2026 — Data for Figure 2.1 |
-| Organization | University of Oxford, Wellbeing Research Centre, publishing with Gallup, the UN Sustainable Development Solutions Network, and an independent editorial board |
-| Underlying survey source | Gallup World Poll for life evaluations |
-| Website | https://www.worldhappiness.report/ |
-| Data page | https://www.worldhappiness.report/data-sharing/ |
-| Direct download | https://files.worldhappiness.report/WHR26_Data_Figure_2.1.xlsx |
-| Accessed | October 13, 2026 |
-| Description | Country/territory life evaluation averages, ranks, confidence intervals where available, six modeled contributions, and Dystopia + residual |
-| Unit of observation | One country/territory in one source `Year` label; not one person |
-| Time coverage | Source `Year` labels span 2011–2025, with 14 distinct labels and no 2013 entries. Verify individual historical aggregation windows before time comparisons. Latest rows cover 2023–2025. |
-| Geographic coverage | Worldwide; 168 distinct country/territory labels across the full file, 147 in the latest snapshot. Labels are preserved as supplied. |
-| Rows | 2,116 data rows, excluding the header; 147 in the chart’s latest snapshot |
-| Columns | 13 original columns |
-| Worksheet | `Data for Figure 2.1 (2011–2025)` — the workbook’s only sheet |
-| Format | Original `.xlsx`; a values-only `.csv` export and a derived JavaScript chart snapshot are included |
-| License / terms | The official data-sharing page makes Figure 2.1 data available to download for free. No named open-data license such as CC0 or CC BY was identified on that page or in the workbook. This project attributes the source and does not claim to relicense the data. Additional Gallup data have separate request/subscription arrangements. |
+| **Dataset name** | World Happiness Report 2026 — Data for Figure 2.1 (`WHR26_Data_Figure_2.1.xlsx`) |
+| **Source / organization** | *World Happiness Report*, published by the Wellbeing Research Centre at the University of Oxford in partnership with Gallup, the UN Sustainable Development Solutions Network, and an independent editorial board. Life evaluations come from the Gallup World Poll. |
+| **URL** | Data page: <https://www.worldhappiness.report/data-sharing/> · File: <https://files.worldhappiness.report/WHR26_Data_Figure_2.1.xlsx> |
+| **Date accessed** | October 13, 2026 |
+| **Brief description** | Country-level national averages of life evaluation (the Cantril ladder, 0–10) from each annual report’s ranking. Every row is one country or territory in one ranking snapshot. It contains the score, its rank, a 95% confidence interval, and, for recent snapshots, the report’s breakdown of the score into six modeled contributions plus *Dystopia + residual*. |
+| **Time period covered** | 14 ranking snapshots labelled `Year` 2011, 2012 and 2014–2025 (no 2013 snapshot). Each label is the **end year of a pooled survey window**. Most windows are three years long (e.g. `2025` = surveys from 2023–2025). The `2011` snapshot covers 2005–2011. Overall survey coverage: **2005–2025**. |
+| **Geographic coverage** | Worldwide, country / territory level. 168 distinct country or territory names across all snapshots; 147 in the latest (2023–2025) snapshot. No region, continent or coordinate fields. |
+| **Number of rows** | 2,116 data rows (excluding the header) |
+| **Number of columns** | 13 |
+| **File format** | Microsoft Excel (`.xlsx`), one worksheet. A values-only CSV export (`data/whr_figure_2_1.csv`) is used for reproducibility. |
+| **Data license / terms of use** | The data-sharing page states that the Figure 2.1 data are “available to download for free.” No named license (such as CC BY or CC0) or further terms are given on that page or in the workbook, so the data are used here with citation to the World Happiness Report. The underlying Gallup World Poll microdata are proprietary and **not** included. D3’s ISC license applies only to the bundled library, not to this data. |
 
-The original workbook is included unchanged in `data/`. The CSV preserves all 13 source headers and all 2,116 rows; blanks remain blank. SHA-256 of the original workbook: `576e382655cec3ae704a0b41cd2c04465b87cd84b7f131a0c4fa26d41f6d8028`.
+The original workbook is kept unchanged in `data/` (SHA-256 `576e3826…8028`).
 
-## Step 3 — Explore the data
+---
 
-### Variables and meaning
+## Step 3 — Explore the Data
 
-| Variable(s) | Type | Interpretation |
+All statistics below were recomputed directly from the workbook. Each one states the snapshot it describes. Country averages are **unweighted**: each country counts once, regardless of population.
+
+### Variables
+
+| Column | Type | Notes |
 |---|---|---|
-| `Country name` | Categorical / geographic identifier | Country or territory label. There are no coordinates, continent fields, or population weights in this file. |
-| `Year` | Temporal integer label | Identifies a source snapshot. For the latest snapshot, 2025 denotes the end of the 2023–2025 ranking period, published in WHR 2026. |
-| `Rank` | Numerical, ordinal | Published position in that snapshot; rank differences are not equal score differences. |
-| `Life evaluation (3-year average)` | Numerical | Average Cantril Ladder life evaluation on a 0–10 scale. |
-| `Lower whisker`, `Upper whisker` | Numerical | Reported lower and upper endpoints of a 95% confidence interval for average life evaluation, when supplied. |
-| Six `Explained by:` fields | Numerical, modeled contributions | Log GDP per capita, social support, healthy life expectancy, freedom to make life choices, generosity, and perceptions of corruption. Values are contributions in life evaluation points, not dollars, years of life, or raw survey percentages. |
-| `Dystopia + residual` | Numerical, modeled remainder | The benchmark plus prediction residual. Can be negative; it is not another directly measured social indicator. |
+| `Year` | Time (ordinal snapshot label) | End year of the survey window, not the publication year (the 2026 report = `Year 2025`). 14 unique values. |
+| `Rank` | Numerical, ordinal | 1 = highest score in that snapshot. Rank gaps do not represent equal score gaps. |
+| `Country name` | Categorical, **geographic** | 168 unique names overall, 147 in 2025. The only geographic field. |
+| `Life evaluation (3-year average)` | Numerical, continuous (0–10) | **The key outcome variable.** Mean answer to the Cantril ladder question. |
+| `Lower whisker`, `Upper whisker` | Numerical | 95% confidence interval for the score. |
+| Six `Explained by: …` columns | Numerical (modeled contributions, in score points) | Model output, not raw data (see the note at the top). |
+| `Dystopia + residual` | Numerical (score points, can be negative) | Benchmark of a hypothetical lowest-scoring country plus everything the model leaves unexplained. |
 
-The main variables of interest are **score, rank, and confidence interval width**. They help compare countries without treating a rank as a perfectly precise measurement. The contribution fields are interesting for follow-up questions, provided their model-derived nature is explicit.
+- **Important variables:** `Life evaluation`, `Year`, `Country name`, and the six contributions.
+- **Numerical:** `Rank`, `Life evaluation`, both whiskers, the six contributions, and `Dystopia + residual` (11 columns).
+- **Categorical:** `Country name` (`Year` can also be treated as an ordered category).
+- **Date / time:** `Year` (snapshot label for a multi-year window).
+- **Geographic:** `Country name` only.
+- **Particularly interesting:** the 14-snapshot score history (for change over time), and the six contributions. Countries with nearly equal scores can have very different contribution profiles.
 
-### Missing data
+### Descriptive statistics — life evaluation score
 
-| Original column | Missing in 2,116 rows | Missing in latest 147 |
-|---|---:|---:|
-| `Year` | 0 | 0 |
-| `Rank` | 0 | 0 |
-| `Country name` | 0 | 0 |
-| `Life evaluation (3-year average)` | 0 | 0 |
-| `Lower whisker` | 1,094 | 0 |
-| `Upper whisker` | 1,094 | 0 |
-| `Explained by: Log GDP per capita` | 1,097 | 0 |
-| `Explained by: Social support` | 1,097 | 0 |
-| `Explained by: Healthy life expectancy` | 1,100 | 1 |
-| `Explained by: Freedom to make life choices` | 1,099 | 1 |
-| `Explained by: Generosity` | 1,097 | 0 |
-| `Explained by: Perceptions of corruption` | 1,098 | 0 |
-| `Dystopia + residual` | 1,103 | 2 |
+**Latest snapshot, `Year 2025` (surveys 2023–2025), n = 147:**
 
-No country–Year key is duplicated. Every row has a score, country label, year, and rank. The 1,094 observations with year labels through 2018 have no confidence interval endpoints. Historical factor coverage also has gaps. Missing historical components must not be filled with zero.
+| Statistic | Value |
+|---|---:|
+| Minimum | 1.446 (Afghanistan) |
+| Maximum | 7.764 (Finland) |
+| Mean | 5.650 |
+| Median | 5.937 |
+| Range | 6.318 |
+| 25th / 75th percentile | 4.666 / 6.576 |
+| Unique score values | 145 of 147 |
 
-In the latest snapshot, the missing component values occur in: **Healthy life expectancy: State of Palestine; Freedom to make life choices: Tajikistan; Dystopia + residual: Tajikistan, State of Palestine**. All of these observations remain in the chart because their scores and intervals are available. The detail panel shows unavailable components explicitly.
+The mean is below the median because a small group of very low scores pulls it down.
 
-### Descriptive statistics — latest snapshot only
+**Comparison across snapshots:**
 
-Statistics below use the source rows where `Year = 2025`. Each country/territory has equal weight; missing values are omitted separately for each variable. Numbers are rounded to three decimals for display. These are descriptive country-level summaries, **not a population-weighted estimate of global happiness**.
-
-| Variable | Valid n | Minimum | Maximum | Mean | Median | Range |
+| Snapshot (survey window) | n | Min | Max | Mean | Median | Range |
 |---|---:|---:|---:|---:|---:|---:|
-| Life evaluation (3-year average) | 147 | 1.446 | 7.764 | 5.650 | 5.937 | 6.318 |
-| Contribution: Log GDP per capita | 147 | 0.000 | 2.167 | 1.535 | 1.565 | 2.167 |
-| Contribution: Social support | 147 | 0.000 | 1.720 | 1.205 | 1.292 | 1.720 |
-| Contribution: Healthy life expectancy | 146 | 0.000 | 1.238 | 0.616 | 0.607 | 1.238 |
-| Dystopia + residual | 145 | -0.295 | 2.701 | 1.163 | 1.164 | 2.996 |
-| CI width (`Upper whisker − Lower whisker`) | 147 | 0.124 | 0.621 | 0.221 | 0.205 | 0.497 |
+| `2012` (2010–2012) | 156 | 2.936 | 7.693 | 5.419 | 5.326 | 4.757 |
+| `2019` (2017–2019) | 153 | 2.567 | 7.809 | 5.473 | 5.515 | 5.242 |
+| `2025` (2023–2025) | 147 | 1.446 | 7.764 | 5.650 | 5.937 | 6.318 |
+| All 14 snapshots pooled | 2,116 | 1.364 (Afghanistan, `2024`) | 7.856 (Denmark, `2011`) | 5.466 | 5.480 | 6.492 |
 
-- **147 unique country/territory labels**, 147 source ranks, and **145 distinct rounded score values** occur in the latest snapshot.
-- **71 / 147 (48.30%)** have scores of at least 6.000. **13 / 147 (8.84%)** have scores below 4.000.
-- The highest score is **Finland: 7.764**, with interval **7.690–7.837**. The lowest is **Afghanistan: 1.446**, with interval **1.348–1.544**. Their score difference is **6.318 points**.
-- The highest-ranked 20 scores span **0.943 points**, compared with **2.860 points** among the lowest-ranked 20. Equal-size ranking groups have quite different spreads.
-- Iceland (**7.540**, CI **7.449–7.630**) and Denmark (**7.539**, CI **7.446–7.631**) illustrate how adjacent ranks can have almost identical rounded scores and strongly overlapping intervals. No formal pairwise significance test is performed here.
+Different snapshots contain different sets of countries, so these rows are not a like-for-like trend.
 
-### Unusual values and limitations
+### Counts and percentages
 
-1. **Negative model remainders:** Dystopia + residual is negative for Hong Kong SAR of China, Sri Lanka, and Botswana. These values are retained, not treated as data-entry errors. A prediction residual can be negative.
-2. **Zero contributions:** A modeled contribution of zero is a valid number relative to the report’s benchmark. It does not mean a country has zero GDP, no lifespan, or no happiness.
-3. **Historical coverage:** Year 2013 is absent from the workbook, and the number of entries varies from 137 to 158 per year label. Country labels can also change. Historical comparisons require aligned names and verified reporting periods.
-4. **Overlapping periods:** Successive three-year windows share observations. They are not independent annual measurements, and they can smooth short-term events.
-5. **Survey uncertainty:** Scores are estimates. Confidence intervals describe uncertainty around country averages, not the distribution of individual happiness. Overlap alone is not a formal test of equality.
-6. **Model versus measurement:** The score comes from life evaluations. The six contribution fields explain variation using a model and do not establish causal effects. A plot of a contribution against the score would partly reflect how the model was constructed.
-7. **Aggregation:** National averages hide differences within countries. This file lacks individual age, gender, income, survey sample sizes, and population weights needed for many deeper questions.
-8. **Rounding:** Source values are rounded to three decimals. Some scores tie after rounding, and contribution sums may differ slightly from the score. Published ranks are preserved instead of recomputed from rounded scores.
+**`Year 2025` scores by one-point band (n = 147):**
 
-## Step 4 — Ask questions
+| Band | 1–2 | 2–3 | 3–4 | 4–5 | 5–6 | 6–7 | 7–8 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Countries | 1 | 0 | 12 | 33 | 30 | 61 | 10 |
+| Share | 0.7% | 0.0% | 8.2% | 22.4% | 20.4% | 41.5% | 6.8% |
 
-1. **Ranking and uncertainty:** Which countries have the highest and lowest average life evaluations, and how close are neighboring ranks once confidence intervals are shown? The implemented chart addresses this directly.
-2. **Distribution:** Is the range of scores wider among the lowest-ranked 20 than among the highest-ranked 20? What proportion of countries have scores above a chosen threshold?
-3. **Model relationship:** Among the latest observations with complete values, how is the modeled social-support contribution associated with life evaluation? Which countries depart from the overall association? Interpret this as model exploration, not causal evidence.
-4. **Change over time:** For countries with consistent identifiers and comparable reporting windows, how did scores change between selected snapshots? Compare actual score differences, not only ranks, and acknowledge overlapping windows.
-5. **Unusual observations:** Which countries have the largest positive or negative Dystopia + residual values, and which additional data would be needed to investigate them?
+No country scores below 1 or at 8 or above. 71 countries (48.3%) score 6 or higher.
 
-## Step 5 — Propose three uses and sketch them
+**Countries per snapshot:** 2011: 156 · 2012: 156 · 2014: 158 · 2015: 157 · 2016: 155 · 2017: 156 · 2018: 156 · 2019: 153 · 2020: 149 · 2021: 146 · 2022: 137 · 2023: 143 · 2024: 147 · 2025: 147.
 
-![Three conceptual chart designs](sketches.svg)
+**Coverage over time:** 129 of 168 country names (76.8%) appear in all 14 snapshots.
 
-The sketches are **conceptual wireframes**. Their marks show layouts, not additional computed findings.
+**Change between `2019` (2017–2019) and `2025` (2023–2025), same 144 countries:**
+- 90 rose (62.5%) and 54 fell (37.5%).
+- The average change was +0.099 points.
+- Largest rise: Viet Nam (+1.075). Largest fall: Afghanistan (−1.121).
+- Full list: [matched_changes.csv](matched_changes.csv).
 
-| Proposal | What it shows / does | Audience | Why it matters |
-|---|---|---|---|
-| 1. Rankings with uncertainty — implemented | Horizontal bars on a fixed 0–10 scale, confidence-interval whiskers, top/bottom/all groups, country search, and a detail panel | Students, general readers, and journalists | Makes both the size of score differences and the uncertainty visible, rather than presenting ranks alone |
-| 2. Distribution explorer — proposed | A histogram of country scores, with a selectable threshold and a selected country marker | Readers comparing one country with the broader sample | Shows concentration, spread, and tails; labels counts as countries rather than people |
-| 3. Country comparison over time — proposed | Lines for a small set of selected countries across verified comparable three-year windows; visible gaps for unavailable periods | Students and researchers exploring change | Separates score changes from ranking changes while exposing missing coverage and overlap between periods |
+### Descriptive statistics — six modeled contributions (`Year 2025`, score points)
 
-## Step 6 — Make one interactive D3 chart
+| Modeled contribution | n | Min | Max | Mean | Median | Range | Unique values |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Log GDP per capita | 147 | 0.000 | 2.167 | 1.535 | 1.565 | 2.167 | 138 |
+| Social support | 147 | 0.000 | 1.720 | 1.205 | 1.292 | 1.720 | 141 |
+| Healthy life expectancy | 146 | 0.000 | 1.238 | 0.616 | 0.607 | 1.238 | 134 |
+| Freedom to make life choices | 146 | 0.000 | 1.147 | 0.882 | 0.913 | 1.147 | 133 |
+| Generosity | 147 | 0.000 | 0.295 | 0.106 | 0.106 | 0.295 | 102 |
+| Perceptions of corruption | 147 | 0.000 | 0.512 | 0.148 | 0.115 | 0.512 | 117 |
+| Dystopia + residual | 145 | −0.295 | 2.701 | 1.163 | 1.164 | 2.996 | 137 |
 
-**Title:** A closer look at happiness.  
-**Subtitle:** How do countries compare when people evaluate their own lives? Explore average life evaluations and the uncertainty behind the rankings.
+A larger average contribution does **not** mean that factor matters more to happiness. Contribution size depends on the model’s coefficients and benchmark, as well as on each country’s values.
 
-- **Scope:** Latest 147 country/territory observations, `Year = 2025`, corresponding to WHR 2026’s 2023–2025 averages. The initial view shows the 20 highest-ranked entries.
-- **Form:** Horizontal bars; the x-axis runs from 0 to 10 and remains fixed across filters. The y-axis identifies each country/territory and its published rank. Whiskers show the reported 95% confidence interval.
-- **Interactivity:** Switch between the highest 20, lowest 20, and all 147. Search across the full latest snapshot. Toggle confidence intervals. Hover for exact values, or click/focus a row to inspect the country and model decomposition. Reset restores the initial view.
-- **Access:** Native controls support keyboard navigation; chart rows can be focused and activated with Enter or Space. A collapsible HTML table shows every displayed row. Long charts scroll vertically; narrow screens can scroll the chart horizontally.
-- **Missing data policy:** No latest scores or intervals are missing, so all 147 are eligible. Unavailable model components remain null and appear as “Not available.” No imputation is performed.
-- **Attribution:** The chart links the official source, original workbook, downloadable full CSV, and this README.
+### Missing and unusual values
 
-### Open and reproduce
+| Column | Missing, all 2,116 rows | Missing, `2025` (147 rows) |
+|---|---:|---:|
+| `Year`, `Rank`, `Country name`, `Life evaluation` | 0 (0%) | 0 |
+| `Lower whisker`, `Upper whisker` | 1,094 (51.7%) | 0 |
+| Log GDP per capita · Social support · Generosity | 1,097 (51.8%) each | 0 |
+| Perceptions of corruption | 1,098 (51.9%) | 0 |
+| Freedom to make life choices | 1,099 (51.9%) | 1 (Tajikistan) |
+| Healthy life expectancy | 1,100 (52.0%) | 1 (State of Palestine) |
+| Dystopia + residual | 1,103 (52.1%) | 2 (Tajikistan, State of Palestine) |
 
-1. Open the [published chart](https://jieyishang7.github.io/js_data-visualization/js_data%20exploration/?v=whr2026-2).
-2. For offline use, download the folder and open `index.html` in a browser. Keep its relative subfolders intact. Both D3 and the chart snapshot are local, so the chart does not require an internet connection. External reference links still require internet.
-3. Run `python3 analyze.py` from this folder to reproduce `data/summary.json` and `data/happiness.js` from the included CSV. It uses only Python’s standard library.
-4. To recreate the initial values-only CSV from the original Excel workbook, use pandas with an Excel reader: `pandas.read_excel("data/WHR26_Data_Figure_2.1.xlsx").to_csv("data/whr_figure_2_1.csv", index=False)`. The original workbook is never edited.
+- **Missing values follow a pattern.** Confidence intervals and contributions exist only from `Year 2019` onward. Every row from `2011` to `2018` has a score but no interval or contributions. In `2023`, 3 of 143 rows also lack contributions.
+- Blanks are kept as missing and never replaced with 0. In `2025`, each of the six contributions has exactly one value of 0.000; these are recorded values, not blanks.
+- **Negative residuals in `2025`:** Hong Kong SAR of China, Sri Lanka and Botswana (3 of 145). These are valid model results, not errors.
+- **Outlier:** Afghanistan’s `2025` score (1.446) is the only value outside the 1.5 × IQR fences (1.801–9.441). It is flagged, not removed.
+- **Name changes:** *Swaziland* in older snapshots is *Eswatini* in newer ones. This is the only name matched across snapshots, based on the [UN record](https://www.un.org/en/about-us/member-states/eswatini).
+- There are no duplicate country–year rows.
 
-### Project files
+### Potential problems and limitations
 
-| File | Purpose |
-|---|---|
-| `index.html`, `style.css`, `chart.js` | Interactive D3 chart and its presentation |
-| `data/WHR26_Data_Figure_2.1.xlsx` | Unchanged official source workbook |
-| `data/whr_figure_2_1.csv` | Full values-only export with original headers |
-| `data/happiness.js` | Derived latest-snapshot data, embedded for offline opening |
-| `data/summary.json` | Computed descriptive statistics and missing-value counts |
-| `analyze.py` | Reproducible calculations and chart-snapshot generation |
-| `sketches.svg` | Three proposed visualization designs |
-| `vendor/d3.v7.min.js`, `vendor/LICENSE-d3` | D3 v7.9.0 and its ISC license; the library license does not apply to the WHR data |
+1. **The contributions are modeled, not measured.** Raw GDP, health or survey indicators are not in this file. The data cannot show which raw factor is most strongly correlated with happiness, and it cannot show causation.
+2. **Overlapping survey windows.** Consecutive snapshots usually share two survey years, so each point is not an independent annual measurement. The 2011 window (2005–2011) is longer, and there is no 2013 snapshot. Countries are not necessarily surveyed in every year of a window.
+3. **Changing country sets** (137–158 countries per snapshot). Changes over time should compare the same countries.
+4. **Model definitions can change between report editions.** Historical contributions are therefore not compared over time.
+5. **Small differences in rank are often not meaningful.** In `2025`, Iceland and Denmark differ by 0.001 points, and their confidence intervals overlap heavily.
+6. **No regional field, and no population weighting.** Means describe the average country, not the average person in the world.
 
-### References
+---
 
-- Helliwell, J. F., Layard, R., Sachs, J. D., De Neve, J.-E., Aknin, L. B., & Wang, S. (Eds.). (2026). *World Happiness Report 2026*. University of Oxford: Wellbeing Research Centre. [Data sharing and download](https://www.worldhappiness.report/data-sharing/).
-- World Happiness Report. [Frequently Asked Questions](https://www.worldhappiness.report/faq/). Definitions of life evaluation, confidence intervals, and modeled contributions.
-- World Happiness Report 2026, Chapter 2. [International evidence on happiness and social media](https://www.worldhappiness.report/ed/2026/international-evidence-on-happiness-and-social-media/). Figure 2.1, ranking period, and interpretation.
+## Step 4 — Ask Questions
 
+**1. How have happiness scores changed across countries over time?**
+The data supports this question: it has 14 snapshots of `Life evaluation` per country (2005–2025), and 129 countries appear in every snapshot. For example, among the 144 countries in both `2019` and `2025`, 62.5% rose and the average change was +0.099 points. Answers should compare the same countries and treat each point as a multi-year average. → *Proposal A*
 
-### Validation
+**2. How do the six modeled explanatory contributions relate to happiness scores across countries?**
+The data supports this question: the 2025 snapshot has 146–147 complete country pairs of score and contribution for each factor. The question is about the report’s *model decomposition*. It does not ask whether raw GDP or social support causes happiness. Patterns and exceptions can be described; causal or “strongest driver” claims cannot. → *Proposal B*
 
-The data checks confirm 2,116 rows, 13 columns, no duplicated country–Year keys, 147 latest observations, scores within 0–10, and every latest score inside its reported interval. Browser checks confirmed 20 initial rows, 20 lowest-ranked rows ending in Afghanistan, 147 rows in the all-country view and HTML table, country search and empty-search handling, missing components for Tajikistan, the confidence-interval toggle, keyboard selection, and Reset. No browser console errors were observed. A narrow viewport was checked for page overflow; the chart scrolls inside its container. The page was tested via HTTP; direct `file://` navigation is not supported by the test browser.
+**3. Can countries with similar happiness scores have different explanatory contribution profiles?**
+Yes, the data shows this directly. In `2025`, Benin (4.393) and Lesotho (4.375) differ by only 0.018 points, but their social-support contributions are 0.087 and 1.135. This shows that the model splits their scores very differently. It does not show that their actual levels of social support differ by that amount. → *Proposal C*
+
+---
+
+## Step 5 — Three Proposed Uses
+
+All three proposals were sketched first using real workbook values, then implemented as interactive views.
+
+### A — Happiness over time
+
+![Sketch A: time comparison](concept_A.svg)
+
+- **What it shows / does:** a line chart of life evaluation for up to eight selected countries across all 14 snapshots. Users choose start and end snapshots, highlight countries that rose or fell, and read exact values in tooltips and a data table. Lines break where a snapshot or country record is missing.
+- **Who it is for:** students, journalists and general readers comparing national trajectories.
+- **Why it matters:** news coverage focuses on rank. Showing actual score changes, together with the gaps in the record, gives a more honest picture of change.
+
+### B — Happiness & explanatory factors
+
+![Sketch B: scatterplot](concept_B.svg)
+
+- **What it shows / does:** a `2025` (2023–2025) scatterplot of life evaluation (y) against one selectable modeled contribution (x, in score points). Users can filter by country name, highlight a country, and see exact values and confidence intervals. No regression line or correlation coefficient is drawn.
+- **Who it is for:** students and readers who want to understand how the report explains national scores.
+- **Why it matters:** it makes the report’s model visible while labelling it clearly as a model. This guards against the common misreading that these columns are raw measurements or causes.
+
+### C — Happiness contribution profiles
+
+![Sketch C: heatmap](concept_C.svg)
+
+- **What it shows / does:** a heatmap of the six `2025` contributions for up to eight countries. All columns share one 0–2.2-point color scale, every cell shows its value, and missing cells are hatched as N/A. Rows can be sorted by score, name or any contribution. A one-click Benin–Lesotho comparison is included.
+- **Who it is for:** readers curious about why countries with similar scores might differ.
+- **Why it matters:** one score hides very different modeled compositions, and this view makes that visible. The six cells do not add up to the score without *Dystopia + residual*, which is shown in the details.
+
+---
+
+## Step 6 — The Interactive Chart
+
+[index.html](index.html) implements A, B and C with D3 v7. Each view has a title and subtitle, labelled axes with units, a data-source citation, tooltips with exact values, and an accessible data table. Each view also states which snapshot or survey window it uses.
+
+<details>
+<summary>Snapshot labels and their nominal survey windows</summary>
+
+| `Year` | Survey window | Source |
+|---|---|---|
+| 2011 | 2005–2011 | [WHR 2015](https://files.worldhappiness.report/WHR15.pdf) |
+| 2012 | 2010–2012 | [WHR 2013](https://files.worldhappiness.report/WHR13.pdf) |
+| 2014 | 2012–2014 | [WHR 2015](https://files.worldhappiness.report/WHR15.pdf) |
+| 2015 | 2013–2015 (some older surveys) | [WHR 2016](https://files.worldhappiness.report/WHR16_Vol01.pdf) |
+| 2016–2025 | (Year − 2) to Year | Respective WHR 2017–2026 editions, e.g. [WHR 2026 ch. 2](https://www.worldhappiness.report/ed/2026/international-evidence-on-happiness-and-social-media/) |
+
+</details>
+
+### Reproducibility
+
+```sh
+python3 analyze.py        # 2025 records → data/happiness.js, data/summary.json
+python3 build_history.py  # all 2,116 scores → data/history.js
+python3 eda_review.py     # statistics → review_statistics.json, matched_changes.csv (needs pandas, openpyxl)
+python3 verify_data.py    # checks every exported value against the original workbook (needs openpyxl)
+```
+
+No values are imputed, smoothed, normalized or adjusted. Displayed numbers are rounded to three decimals. Browser test results are in [VALIDATION.md](VALIDATION.md).
+
+### Attribution and AI use
+
+D3 v7.9.0 ([d3js.org](https://d3js.org/), ISC license in `vendor/LICENSE-d3`). Code, analysis scripts, sketches and prose were generated or revised with AI assistance (OpenAI Codex and Claude Code), as permitted by the [course policy](https://jjjiia.github.io/data_visualization_2026/policies.html). Prompts and decisions are recorded in [AI_ASSISTANCE.md](AI_ASSISTANCE.md), with the expanded implementation prompt in [IMPLEMENTATION_REQUEST.md](IMPLEMENTATION_REQUEST.md).
+
+Data: World Happiness Report 2026, *Data for Figure 2.1*, accessed October 13, 2026.

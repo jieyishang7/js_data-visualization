@@ -1,0 +1,244 @@
+{
+  "shape": [
+    2116,
+    13
+  ],
+  "country_labels": 168,
+  "latest_describe": {
+    "count": 147.0,
+    "mean": 5.649857142857143,
+    "std": 1.138309856219792,
+    "min": 1.446,
+    "25%": 4.666,
+    "50%": 5.937,
+    "75%": 6.5760000000000005,
+    "max": 7.764
+  },
+  "latest_quantiles": {
+    "0.1": 4.146800000000001,
+    "0.25": 4.666,
+    "0.5": 5.937,
+    "0.75": 6.5760000000000005,
+    "0.9": 6.9124
+  },
+  "histogram_width_1": [
+    0,
+    1,
+    0,
+    12,
+    33,
+    30,
+    61,
+    10,
+    0,
+    0
+  ],
+  "iqr_fences": [
+    1.8010000000000002,
+    9.441
+  ],
+  "iqr_outliers": [
+    {
+      "Country name": "Afghanistan",
+      "Life evaluation (3-year average)": 1.446
+    }
+  ],
+  "matched_n": 144,
+  "name_mapping": {
+    "Swaziland": "Eswatini"
+  },
+  "only_2019": [
+    "Belarus",
+    "Burundi",
+    "Central African Republic",
+    "Haiti",
+    "Maldives",
+    "North Cyprus",
+    "Rwanda",
+    "South Sudan",
+    "Turkmenistan"
+  ],
+  "only_2025": [
+    "Belize",
+    "Oman",
+    "Somalia"
+  ],
+  "change_mean": 0.09861319984330073,
+  "increased": 90,
+  "decreased": 54,
+  "unchanged": 0,
+  "gainers": [
+    {
+      "comparison_name": "Viet Nam",
+      "Life evaluation (3-year average)_2019": 5.35349988937378,
+      "Life evaluation (3-year average)_2025": 6.428,
+      "change": 1.0745001106262198
+    },
+    {
+      "comparison_name": "India",
+      "Life evaluation (3-year average)_2019": 3.57329988479614,
+      "Life evaluation (3-year average)_2025": 4.536,
+      "change": 0.9627001152038597
+    },
+    {
+      "comparison_name": "China",
+      "Life evaluation (3-year average)_2019": 5.12389993667603,
+      "Life evaluation (3-year average)_2025": 6.074,
+      "change": 0.95010006332397
+    },
+    {
+      "comparison_name": "Serbia",
+      "Life evaluation (3-year average)_2019": 5.77820014953613,
+      "Life evaluation (3-year average)_2025": 6.691,
+      "change": 0.9127998504638697
+    },
+    {
+      "comparison_name": "Armenia",
+      "Life evaluation (3-year average)_2019": 4.67679977416992,
+      "Life evaluation (3-year average)_2025": 5.584,
+      "change": 0.9072002258300795
+    }
+  ],
+  "decliners": [
+    {
+      "comparison_name": "Afghanistan",
+      "Life evaluation (3-year average)_2019": 2.56690001487732,
+      "Life evaluation (3-year average)_2025": 1.446,
+      "change": -1.1209000148773198
+    },
+    {
+      "comparison_name": "Lebanon",
+      "Life evaluation (3-year average)_2019": 4.77150011062622,
+      "Life evaluation (3-year average)_2025": 3.723,
+      "change": -1.04850011062622
+    },
+    {
+      "comparison_name": "Pakistan",
+      "Life evaluation (3-year average)_2019": 5.69329977035522,
+      "Life evaluation (3-year average)_2025": 4.868,
+      "change": -0.8252997703552198
+    },
+    {
+      "comparison_name": "Benin",
+      "Life evaluation (3-year average)_2019": 5.21600008010864,
+      "Life evaluation (3-year average)_2025": 4.393,
+      "change": -0.8230000801086401
+    },
+    {
+      "comparison_name": "Congo",
+      "Life evaluation (3-year average)_2019": 5.1943998336792,
+      "Life evaluation (3-year average)_2025": 4.456,
+      "change": -0.7383998336791997
+    }
+  ],
+  "period_stats": {
+    "2019": {
+      "n": 144,
+      "mean": 5.5480048557122545,
+      "median": 5.54605007171631,
+      "p10": 4.29442000389099,
+      "p90": 7.113089895248416,
+      "p90_p10_gap": 2.818669891357426,
+      "range": 5.24180006980896
+    },
+    "2025": {
+      "n": 144,
+      "mean": 5.646618055555555,
+      "median": 5.9365000000000006,
+      "p10": 4.1264,
+      "p90": 6.9142,
+      "p90_p10_gap": 2.7878,
+      "range": 6.3180000000000005
+    }
+  },
+  "latest_factor_stats": {
+    "Explained by: Log GDP per capita": {
+      "n": 147,
+      "min": 0.0,
+      "max": 2.167,
+      "mean": 1.5349319727891155,
+      "median": 1.565,
+      "range": 2.167
+    },
+    "Explained by: Social support": {
+      "n": 147,
+      "min": 0.0,
+      "max": 1.72,
+      "mean": 1.2047619047619047,
+      "median": 1.292,
+      "range": 1.72
+    },
+    "Explained by: Healthy life expectancy": {
+      "n": 146,
+      "min": 0.0,
+      "max": 1.238,
+      "mean": 0.6161232876712328,
+      "median": 0.607,
+      "range": 1.238
+    },
+    "Explained by: Freedom to make life choices": {
+      "n": 146,
+      "min": 0.0,
+      "max": 1.147,
+      "mean": 0.8823082191780822,
+      "median": 0.9135,
+      "range": 1.147
+    },
+    "Explained by: Generosity": {
+      "n": 147,
+      "min": 0.0,
+      "max": 0.295,
+      "mean": 0.10630612244897958,
+      "median": 0.106,
+      "range": 0.295
+    },
+    "Explained by: Perceptions of corruption": {
+      "n": 147,
+      "min": 0.0,
+      "max": 0.512,
+      "mean": 0.14820408163265308,
+      "median": 0.115,
+      "range": 0.512
+    },
+    "Dystopia + residual": {
+      "n": 145,
+      "min": -0.295,
+      "max": 2.701,
+      "mean": 1.1632,
+      "median": 1.164,
+      "range": 2.996
+    }
+  },
+  "similar_example": [
+    {
+      "Year": 2025,
+      "Rank": 124,
+      "Country name": "Benin",
+      "Life evaluation (3-year average)": 4.393,
+      "Lower whisker": 4.262,
+      "Upper whisker": 4.525,
+      "Explained by: Log GDP per capita": 1.122,
+      "Explained by: Social support": 0.087,
+      "Explained by: Healthy life expectancy": 0.409,
+      "Explained by: Freedom to make life choices": 0.816,
+      "Explained by: Generosity": 0.086,
+      "Explained by: Perceptions of corruption": 0.243,
+      "Dystopia + residual": 1.63
+    },
+    {
+      "Year": 2025,
+      "Rank": 126,
+      "Country name": "Lesotho",
+      "Life evaluation (3-year average)": 4.375,
+      "Lower whisker": 4.17,
+      "Upper whisker": 4.579,
+      "Explained by: Log GDP per capita": 1.007,
+      "Explained by: Social support": 1.135,
+      "Explained by: Healthy life expectancy": 0.0,
+      "Explained by: Freedom to make life choices": 0.741,
+      "Explained by: Generosity": 0.057,
+      "Explained by: Perceptions of corruption": 0.069,
+      "Dystopia + residual": 1.365
+    }
+  ]
+}
